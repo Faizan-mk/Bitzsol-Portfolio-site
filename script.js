@@ -30,6 +30,7 @@ function updateActiveLink() {
   let current = '';
   sections.forEach(s => { const top = s.offsetTop - 120; if (window.scrollY >= top) current = s.id; });
   navLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + current));
+  if (window.__syncNavIndicator) window.__syncNavIndicator();
 }
 
 window.addEventListener('scroll', () => {
@@ -57,24 +58,69 @@ function resize() { c.width = window.innerWidth; c.height = window.innerHeight; 
 window.addEventListener('resize', resize);
 resize();
 for (let i = 0; i < 50; i++) pts.push({ x: Math.random() * c.width, y: Math.random() * c.height, r: Math.random() * 1.5 + 0.5, dx: (Math.random() - 0.5) * 0.2, dy: (Math.random() - 0.5) * 0.2 });
-(function() {
+/* Types "Muhammad Faizan" one letter at a time, with a caret that follows along. */
+(function () {
   const el = document.getElementById('heroName');
   if (!el) return;
-  const lines = el.querySelectorAll('span');
-  let idx = 0;
+
+  const lines = [...el.querySelectorAll('span')];
+  const chars = [];
+
   lines.forEach(line => {
     const text = line.textContent;
     line.textContent = '';
     [...text].forEach(ch => {
       const s = document.createElement('span');
-      s.className = 'char-reveal'; s.textContent = ch; s.dataset.idx = idx;
-      line.appendChild(s); idx++;
+      s.className = 'char-reveal';
+      s.textContent = ch;
+      line.appendChild(s);
+      chars.push(s);
     });
   });
-  el.querySelectorAll('.char-reveal').forEach(s => {
-    setTimeout(() => s.classList.add('show'), parseInt(s.dataset.idx) * 120);
-  });
   el.style.opacity = '1';
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    chars.forEach(s => s.classList.add('show'));
+    return;
+  }
+
+  // Every letter is already in the DOM (just invisible), so the line never
+  // reflows while typing — the caret is inserted right after the newest letter.
+  const caret = document.createElement('i');
+  caret.className = 'type-caret';
+
+  const STEP = 95;
+  let timers = [];
+
+  function play() {
+    timers.forEach(clearTimeout);
+    timers = [];
+    caret.classList.remove('done');
+    chars.forEach(s => s.classList.remove('show'));
+    void el.offsetWidth;                         // restart the CSS animations
+
+    chars.forEach((s, i) => {
+      timers.push(setTimeout(() => {
+        s.classList.add('show');
+        s.insertAdjacentElement('afterend', caret);
+      }, i * STEP));
+    });
+    timers.push(setTimeout(() => caret.classList.add('done'), chars.length * STEP + 1500));
+  }
+
+  play();
+
+  // Replay whenever the hero scrolls back into view.
+  const hero = document.getElementById('hero');
+  if (hero) {
+    let away = false;
+    new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) { away = true; }
+        else if (away) { away = false; play(); }
+      });
+    }, { threshold: 0.35 }).observe(hero);
+  }
 })();
 
 function anim() {
@@ -139,3 +185,173 @@ requestAnimationFrame(anim);
       card.addEventListener('mouseleave', () => { card.style.transform = ''; });
     });
   }
+
+/* =========================================================
+   Scroll-driven 3D layer: floating photo shards + avatars
+   ========================================================= */
+(function () {
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const stage = document.querySelector('#photo3d .p3d-stage');
+  const flips = Array.from(document.querySelectorAll('.flip3d-orbit'));
+  if (reduced || (!stage && !flips.length)) return;
+
+  const PHOTO = 'IMG-20250126-WA0018.jpg';
+
+  // x / y are percentages of viewport width / height, measured from the centre.
+  const DEFS = [
+    { x: -40, y: -30, size: 190, z: -520, rot: -12, speed: 0.55, op: 0.30, blur: 2.5 },
+    { x: 41, y: 8, size: 210, z: -460, rot: 10, speed: 0.42, op: 0.28, blur: 2 },
+    { x: -33, y: 42, size: 150, z: -300, rot: 8, speed: 0.75, op: 0.22, blur: 1.2 },
+    { x: 36, y: -46, size: 130, z: -240, rot: -16, speed: 0.85, op: 0.20, blur: 1 },
+    { x: -46, y: 12, size: 110, z: -140, rot: 14, speed: 1.00, op: 0.16, blur: 0 },
+    { x: 47, y: 40, size: 120, z: -120, rot: -9, speed: 1.10, op: 0.15, blur: 0 },
+    { x: -18, y: -58, size: 95, z: -620, rot: 18, speed: 0.35, op: 0.26, blur: 3 },
+    { x: 20, y: 58, size: 100, z: -580, rot: -20, speed: 0.38, op: 0.25, blur: 3 }
+  ];
+
+  const shards = [];
+
+  function buildShards() {
+    if (!stage) return;
+    stage.innerHTML = '';
+    shards.length = 0;
+    const w = window.innerWidth;
+    const count = w < 640 ? 4 : w < 1024 ? 6 : DEFS.length;
+    const scale = w < 640 ? 0.6 : w < 1024 ? 0.8 : 1;
+
+    DEFS.slice(0, count).forEach(d => {
+      const el = document.createElement('figure');
+      el.className = 'p3d-shard';
+      const size = Math.round(d.size * scale);
+      el.style.width = size + 'px';
+      el.style.height = Math.round(size * 1.15) + 'px';
+      if (d.blur) el.style.filter = 'blur(' + d.blur + 'px)';
+
+      const img = document.createElement('img');
+      img.src = PHOTO;
+      img.alt = '';
+      img.decoding = 'async';
+      el.appendChild(img);
+
+      const tint = document.createElement('span');
+      tint.className = 'p3d-tint';
+      el.appendChild(tint);
+
+      const edge = document.createElement('span');
+      edge.className = 'p3d-edge';
+      el.appendChild(edge);
+
+      stage.appendChild(el);
+      shards.push({ el, d, w: size, h: Math.round(size * 1.15) });
+    });
+  }
+
+  let targetScroll = window.scrollY;
+  let smoothScroll = targetScroll;
+  let lastSmooth = smoothScroll;
+  let velocity = 0;
+  let tmx = 0, tmy = 0, mx = 0, my = 0;
+
+  window.addEventListener('scroll', () => { targetScroll = window.scrollY; }, { passive: true });
+
+  // Only rebuild when the responsive bucket actually changes (mobile URL-bar
+  // resizes fire constantly and would otherwise thrash the DOM).
+  let bucket = null;
+  function bucketOf(w) { return w < 640 ? 's' : w < 1024 ? 'm' : 'l'; }
+  window.addEventListener('resize', () => {
+    const b = bucketOf(window.innerWidth);
+    if (b !== bucket) { bucket = b; buildShards(); }
+  });
+
+  if (window.matchMedia('(pointer: fine)').matches) {
+    window.addEventListener('mousemove', e => {
+      tmx = e.clientX / window.innerWidth - 0.5;
+      tmy = e.clientY / window.innerHeight - 0.5;
+    }, { passive: true });
+  }
+
+  const mod = (n, m) => ((n % m) + m) % m;
+
+  function frame() {
+    smoothScroll += (targetScroll - smoothScroll) * 0.09;
+    velocity = smoothScroll - lastSmooth;
+    lastSmooth = smoothScroll;
+    mx += (tmx - mx) * 0.06;
+    my += (tmy - my) * 0.06;
+
+    const W = window.innerWidth;
+    const H = window.innerHeight;
+    const cx = W / 2;
+    const cy = H / 2;
+    const range = H * 2.4;
+
+    if (stage) {
+      stage.style.transform =
+        'rotateX(' + (velocity * 0.06).toFixed(3) + 'deg) rotateY(' + (mx * 4).toFixed(3) + 'deg)';
+
+      for (const s of shards) {
+        const d = s.d;
+        const depth = 1 - d.z / -700;                       // 0 = far, ~1 = near
+        const baseY = (d.y / 100) * H;
+        const yy = mod(baseY - smoothScroll * d.speed + range / 2, range) - range / 2;
+
+        const px = cx + (d.x / 100) * W - s.w / 2 + mx * 90 * depth;
+        const py = cy + yy - s.h / 2 + my * 60 * depth;
+
+        const spinY = d.rot + smoothScroll * d.speed * 0.035;
+        const spinX = -velocity * 0.22 * d.speed;
+        const roll = d.rot * 0.4 + Math.sin((smoothScroll + baseY) * 0.0016) * 5;
+
+        const edge = Math.abs(yy) / (range / 2);
+        const fade = edge > 0.55 ? Math.max(0, 1 - (edge - 0.55) / 0.45) : 1;
+
+        s.el.style.transform =
+          'translate3d(' + px.toFixed(2) + 'px,' + py.toFixed(2) + 'px,' + d.z + 'px)' +
+          ' rotateX(' + spinX.toFixed(2) + 'deg)' +
+          ' rotateY(' + spinY.toFixed(2) + 'deg)' +
+          ' rotateZ(' + roll.toFixed(2) + 'deg)';
+        s.el.style.opacity = (d.op * fade).toFixed(3);
+      }
+    }
+
+    // Avatars keep spinning gently as the page scrolls.
+    for (const f of flips) {
+      f.style.setProperty('--spin', (smoothScroll * 0.05).toFixed(2) + 'deg');
+      f.style.setProperty('--tiltx', (my * 10).toFixed(2) + 'deg');
+    }
+
+    requestAnimationFrame(frame);
+  }
+
+  bucket = bucketOf(window.innerWidth);
+  buildShards();
+  requestAnimationFrame(frame);
+})();
+
+
+/* Slides one gradient pill between the desktop nav links. */
+(function () {
+  const wrap = document.getElementById('navLinks');
+  const pill = document.getElementById('navIndicator');
+  if (!wrap || !pill) return;
+
+  const links = [...wrap.querySelectorAll('.nav-link')];
+
+  function moveTo(el) {
+    if (!el) { pill.style.opacity = '0'; return; }
+    pill.style.width = el.offsetWidth + 'px';
+    pill.style.transform = 'translate(' + el.offsetLeft + 'px, -50%)';
+    pill.style.opacity = '1';
+  }
+
+  function syncToActive() { moveTo(wrap.querySelector('.nav-link.active')); }
+  window.__syncNavIndicator = syncToActive;
+
+  links.forEach(l => l.addEventListener('mouseenter', () => moveTo(l)));
+  wrap.addEventListener('mouseleave', syncToActive);
+  window.addEventListener('resize', syncToActive);
+  // Tailwind is a CDN runtime, so link widths are only final once it has painted.
+  window.addEventListener('load', syncToActive);
+
+  syncToActive();
+})();
