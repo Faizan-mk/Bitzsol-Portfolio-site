@@ -133,7 +133,7 @@ export default function Hero() {
             className="mt-2 flex flex-wrap items-baseline gap-x-2 text-2xl font-bold leading-tight text-white sm:text-4xl"
           >
             <span>Expert</span>
-            <span className="relative inline-flex h-[1.25em] overflow-hidden">
+            <span className="relative inline-flex h-[1.25em] w-full overflow-hidden sm:w-auto">
               <AnimatePresence mode="wait">
                 <motion.span
                   key={roles[role]}
@@ -241,9 +241,9 @@ export default function Hero() {
                 scale: { delay: d + 0.8 + i * 0.12, type: "spring", stiffness: 260, damping: 16 },
                 y: live ? { duration: dur, repeat: Infinity, ease: "easeInOut" } : { duration: 0.3 },
               }}
-              className={`absolute z-10 hidden items-center gap-2 rounded-xl border border-white/10 bg-panel px-3 py-2 text-xs font-medium text-white shadow-xl sm:flex ${className}`}
+              className={`absolute z-10 flex items-center gap-1.5 rounded-lg border border-white/10 bg-panel px-2 py-1.5 text-[10px] font-medium text-white shadow-xl sm:gap-2 sm:rounded-xl sm:px-3 sm:py-2 sm:text-xs ${className}`}
             >
-              <Icon style={{ color }} className="text-base" /> {label}
+              <Icon style={{ color }} className="text-sm sm:text-base" /> {label}
             </motion.div>
           ))}
         </div>
