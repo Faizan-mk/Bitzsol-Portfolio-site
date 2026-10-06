@@ -2,7 +2,7 @@
 
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
-import { FaGithub, FaLinkedinIn } from "react-icons/fa6";
+import { FaGithub, FaLinkedinIn, FaWhatsapp } from "react-icons/fa6";
 import { HiArrowUpRight, HiOutlineDocumentArrowDown, HiOutlineEnvelope, HiOutlineMapPin, HiOutlinePhone } from "react-icons/hi2";
 import { navLinks, profile } from "@/lib/data";
 import Signature from "./brand/Signature";
@@ -51,11 +51,14 @@ export default function Footer() {
           </motion.h2>
           <Magnetic strength={0.4}>
             <a
-              href={`mailto:${profile.email}`}
+              href={profile.whatsapp}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Get in touch on WhatsApp"
               className="group relative flex h-32 w-32 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-[#fbd384] to-gold-deep text-sm font-semibold text-on-gold shadow-[0_0_40px_-8px_rgba(240,178,82,0.7)] transition-transform duration-500 hover:scale-105 sm:h-36 sm:w-36"
             >
               <span className="flex flex-col items-center gap-1">
-                <HiArrowUpRight className="text-xl transition-transform duration-500 group-hover:rotate-45" />
+                <FaWhatsapp className="text-2xl transition-transform duration-500 group-hover:scale-110" />
                 Get in touch
               </span>
             </a>

@@ -9,6 +9,7 @@ export const profile = {
   email: "faizannaizi007@gmail.com",
   phone: "+92-303-2798007",
   phoneHref: "tel:+923032798007",
+  whatsapp: "https://wa.me/923032798007",
   location: "Rawalpindi, Pakistan",
   linkedin: "https://linkedin.com/in/muhammad-faizanmk",
   github: "https://github.com/Faizan-mk",

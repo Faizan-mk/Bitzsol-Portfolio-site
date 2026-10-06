@@ -15,6 +15,7 @@ import {
 export default function Home() {
   return (
     <>
+      <div aria-hidden className="aurora" />
       <SmoothScroll />
       <Preloader />
       <Cursor />

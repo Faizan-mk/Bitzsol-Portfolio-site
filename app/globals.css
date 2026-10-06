@@ -1,7 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display-face), var(--font-body), ui-sans-serif, sans-serif;
   /* Components use white/black utilities for "foreground"/"background"; light mode swaps them below. */
   --color-white: #ffffff;
   --color-black: #000000;
@@ -33,20 +34,34 @@ html.light {
 }
 :root { --sig-a: #ffe6b0; --sig-b: #f5be62; --sig-c: #d99a3a; color-scheme: dark; }
 
+/* Headings: display face with tight tracking. */
+@layer base {
+  h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.025em; }
+}
+
 html, body { max-width: 100%; overflow-x: clip; }
 body { background: var(--color-ink); color: color-mix(in oklab, var(--color-white) 88%, transparent); transition: background-color 0.5s ease, color 0.5s ease; }
 
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-thumb { background: color-mix(in oklab, var(--color-white) 20%, transparent); border-radius: 3px; }
 
-/* Panels: cards with a hairline border that lights up gold on hover. */
+/* Panels: soft-sheen cards with a gold gradient hairline border that lights up on hover. */
 .panel {
-  background: var(--color-panel);
+  position: relative;
+  background: linear-gradient(180deg, color-mix(in oklab, var(--color-white) 3.5%, transparent), transparent 60%), var(--color-panel);
   border: 1px solid var(--color-line);
-  border-radius: 1rem;
+  border-radius: 1.25rem;
   transition: translate 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease, box-shadow 0.35s ease, background-color 0.5s ease;
 }
 html.light .panel { box-shadow: 0 1px 2px rgba(23, 19, 12, 0.04), 0 8px 24px -12px rgba(23, 19, 12, 0.08); }
+.panel::before {
+  content: ""; position: absolute; inset: -1px; border-radius: inherit; padding: 1px; pointer-events: none;
+  background: linear-gradient(140deg, rgba(245, 190, 98, 0.45), transparent 35%, transparent 65%, rgba(245, 190, 98, 0.25));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  opacity: 0.55; transition: opacity 0.4s ease;
+}
+.panel:hover::before { opacity: 1; }
 .panel-hover:hover {
   translate: 0 -4px;
   border-color: rgba(240, 178, 82, 0.4);
@@ -80,7 +95,7 @@ html.light .chip { background: rgba(201, 131, 32, 0.12); color: #9a5a0c; }
 /* Gold call-to-action: flat, squared-off, dark text. */
 .btn-gold {
   display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
-  padding: 0.7rem 1.4rem; border-radius: 0.375rem;
+  padding: 0.75rem 1.5rem; border-radius: 9999px;
   background: linear-gradient(135deg, #fbd384, #f0b252); color: var(--color-on-gold); font-weight: 600; font-size: 0.875rem;
   position: relative; overflow: hidden;
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, background 0.3s ease;
@@ -95,7 +110,8 @@ html.light .chip { background: rgba(201, 131, 32, 0.12); color: #9a5a0c; }
 
 .btn-outline {
   display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
-  padding: 0.7rem 1.2rem; border-radius: 0.375rem; font-size: 0.875rem; font-weight: 500;
+  padding: 0.75rem 1.4rem; border-radius: 9999px; font-size: 0.875rem; font-weight: 500;
+  background: color-mix(in oklab, var(--color-white) 3%, transparent); backdrop-filter: blur(8px);
   border: 1px solid var(--color-line); color: color-mix(in oklab, var(--color-white) 88%, transparent);
   transition: border-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
 }
@@ -111,6 +127,23 @@ html.light .chip { background: rgba(201, 131, 32, 0.12); color: #9a5a0c; }
   box-shadow: 0 0 12px rgba(245, 190, 98, 0.7);
   animation: caretBlink 0.9s steps(1) infinite;
 }
+
+/* Aurora: slow-drifting gold light behind the whole page (transform-only animation, cheap to paint). */
+@keyframes auroraA { 0%, 100% { transform: translate(-10%, -5%) scale(1); } 50% { transform: translate(15%, 10%) scale(1.15); } }
+@keyframes auroraB { 0%, 100% { transform: translate(10%, 20%) scale(1.1); } 50% { transform: translate(-15%, -10%) scale(0.9); } }
+.aurora { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+.aurora::before, .aurora::after { content: ""; position: absolute; width: 70vmax; height: 70vmax; border-radius: 9999px; }
+.aurora::before { left: -20vmax; top: -25vmax; background: radial-gradient(closest-side, rgba(240, 178, 82, 0.10), transparent); animation: auroraA 28s ease-in-out infinite; }
+.aurora::after { right: -25vmax; bottom: -30vmax; background: radial-gradient(closest-side, rgba(217, 140, 50, 0.08), transparent); animation: auroraB 34s ease-in-out infinite; }
+html.light .aurora::before { background: radial-gradient(closest-side, rgba(240, 178, 82, 0.16), transparent); }
+html.light .aurora::after { background: radial-gradient(closest-side, rgba(217, 140, 50, 0.12), transparent); }
+
+/* Section label: small glass pill with a glowing dot. */
+.kicker {
+  display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0.9rem; border-radius: 9999px;
+  border: 1px solid rgba(240, 178, 82, 0.25); background: rgba(240, 178, 82, 0.06);
+}
+.kicker::before { content: ""; width: 6px; height: 6px; border-radius: 9999px; background: var(--color-gold); box-shadow: 0 0 10px var(--color-gold); }
 
 /* Film grain over the whole page for a tactile, printed feel. */
 .grain {

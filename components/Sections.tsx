@@ -12,12 +12,13 @@ import {
 
 function Heading({ kicker, title }: { kicker: string; title: string }) {
   return (
-    <div data-heading className="mb-12 text-center">
-      <p data-kicker className="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-gold">{kicker}</p>
-      <h2 className="text-3xl font-bold tracking-tight text-white sm:text-5xl" aria-label={title}>
-        {title.split(" ").map((w, i) => (
+    <div data-heading className="mb-14 text-center">
+      <p data-kicker className="kicker mb-5 text-[11px] font-semibold uppercase tracking-[0.25em] text-gold">{kicker}</p>
+      <h2 className="text-4xl font-extrabold leading-[1.05] text-white sm:text-5xl lg:text-6xl" aria-label={title}>
+        {/* two-tone: first half of the words in ink, the rest in gold */}
+        {title.split(" ").map((w, i, all) => (
           <span key={i} className="mr-[0.25em] inline-flex overflow-hidden pb-1 last:mr-0" aria-hidden>
-            <span data-word className="inline-block">{w}</span>
+            <span data-word className={`inline-block ${i >= Math.max(1, Math.floor(all.length / 2)) ? "gold-text" : ""}`}>{w}</span>
           </span>
         ))}
       </h2>
@@ -44,30 +45,61 @@ export function Stats() {
 
 export function About() {
   return (
-    <section id="about" className="mx-auto max-w-5xl scroll-mt-24 px-5 py-24 sm:px-8">
+    <section id="about" className="mx-auto max-w-6xl scroll-mt-24 px-5 py-24 sm:px-8">
       <Heading kicker="About Me" title="Professional Profile" />
-      <div data-reveal className="panel grid items-center gap-8 p-6 sm:p-10 md:grid-cols-[auto_1fr]">
-        <div className="relative mx-auto h-40 w-40 overflow-hidden rounded-2xl border-2 border-brand/40">
-          <Image src="/profile.jpg" alt={profile.name} fill sizes="160px" className="object-cover" />
-        </div>
-        <div>
-          <p className="text-sm leading-relaxed text-white/70 sm:text-base">{profile.about}</p>
-          <div className="mt-6 grid gap-3 sm:grid-cols-2">
-            <div className="flex items-center gap-3 rounded-xl border border-line p-4">
-              <HiOutlineAcademicCap className="shrink-0 text-2xl text-gold" />
-              <div>
-                <p className="text-sm font-semibold text-white">{education.degree}</p>
-                <p className="text-xs text-white/50">{education.school} · {education.period}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 rounded-xl border border-line p-4">
-              <HiOutlineTrophy className="shrink-0 text-2xl text-gold" />
-              <div>
-                <p className="text-sm font-semibold text-white">CGPA {education.cgpa}</p>
-                <p className="text-xs text-white/50">Dean&apos;s List Honor</p>
-              </div>
-            </div>
+      {/* bento grid: one large story tile, a portrait, and small fact tiles */}
+      <div className="grid gap-4 md:grid-cols-3">
+        <div data-reveal className="spotlight panel panel-hover flex flex-col justify-between gap-6 p-7 sm:p-9 md:col-span-2 md:row-span-2">
+          <div>
+            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-gold">Who I am</p>
+            <p className="text-sm leading-relaxed text-white/70 sm:text-base">{profile.about}</p>
           </div>
+          <div className="flex flex-wrap gap-3">
+            <a href="#contact" className="btn-gold !py-2.5 !text-xs">Let&apos;s talk <HiArrowRight /></a>
+            <a href={profile.github} target="_blank" rel="noopener noreferrer" className="btn-outline !py-2.5 !text-xs"><FaGithub /> GitHub</a>
+            <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className="btn-outline !py-2.5 !text-xs"><FaLinkedinIn /> LinkedIn</a>
+          </div>
+        </div>
+
+        <div data-reveal className="panel relative aspect-square overflow-hidden">
+          <Image src="/profile.jpg" alt={profile.name} fill sizes="(min-width: 768px) 33vw, 100vw" className="object-cover transition-transform duration-700 hover:scale-105" />
+          <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-[#000]/80 via-transparent to-transparent" />
+          <div className="pointer-events-none absolute bottom-4 left-5">
+            <p className="text-base font-bold text-[#fff]">{profile.name}</p>
+            <p className="text-xs text-[#fff]/70">{profile.role}</p>
+          </div>
+        </div>
+
+        <div data-reveal className="spotlight panel panel-hover flex items-center gap-4 p-6">
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gold/10 text-2xl text-gold"><HiOutlineAcademicCap /></span>
+          <div>
+            <p className="text-sm font-semibold text-white">{education.degree}</p>
+            <p className="text-xs text-white/50">{education.school} · {education.period}</p>
+          </div>
+        </div>
+
+        <div data-reveal className="spotlight panel panel-hover p-6">
+          <p className="text-xs uppercase tracking-[0.2em] text-white/45">CGPA</p>
+          <p className="mt-1 text-3xl font-extrabold text-white">{education.cgpa.split(" ")[0]}<span className="text-base font-medium text-white/40"> / 4.0</span></p>
+          <p className="mt-1 flex items-center gap-1.5 text-xs text-gold"><HiOutlineTrophy /> Dean&apos;s List Honor</p>
+        </div>
+
+        <div data-reveal className="spotlight panel panel-hover p-6">
+          <p className="text-xs uppercase tracking-[0.2em] text-white/45">Based in</p>
+          <p className="mt-1 flex items-center gap-2 text-lg font-bold text-white"><HiOutlineMapPin className="text-gold" /> {profile.location}</p>
+          <p className="mt-1 text-xs text-white/50">Open to remote work</p>
+        </div>
+
+        <div data-reveal className="spotlight panel panel-hover p-6">
+          <p className="text-xs uppercase tracking-[0.2em] text-white/45">Status</p>
+          <p className="mt-1 flex items-center gap-2 text-lg font-bold text-white">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-gold opacity-75" />
+              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-gold" />
+            </span>
+            Available for work
+          </p>
+          <p className="mt-1 text-xs text-white/50">Full-time, freelance or contract</p>
         </div>
       </div>
     </section>

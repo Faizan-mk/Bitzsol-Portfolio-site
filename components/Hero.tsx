@@ -97,11 +97,11 @@ export default function Hero() {
             Available for work
           </motion.p>
 
-          <h1 className="text-4xl font-extrabold leading-[1.1] text-brand sm:text-6xl" aria-label={`I'm ${profile.name}`}>
+          <h1 className="text-4xl font-extrabold leading-[1.05] text-white sm:text-6xl xl:text-7xl" aria-label={`I'm ${profile.name}`}>
             {(() => {
               let idx = 0;
               return words.map((w, wi) => (
-                <span key={wi} className="relative mr-[0.25em] inline-flex pb-1" aria-hidden>
+                <span key={wi} className={`relative mr-[0.25em] inline-flex pb-1 ${wi === words.length - 1 ? "text-brand" : ""}`} aria-hidden>
                   {wi === 0 && typed === 0 && <span className="type-caret" style={{ left: 0, right: "auto" }} />}
                   {[...w].map((ch) => {
                     const i = idx++;

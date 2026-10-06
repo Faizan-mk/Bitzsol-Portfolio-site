@@ -65,7 +65,7 @@ export default function Navbar() {
         <nav
           className={`relative mx-auto flex items-center justify-between transition-[background-color,box-shadow,border-color,margin,height,max-width] duration-500 ${
             scrolled
-              ? "mt-3 h-16 max-w-6xl rounded-2xl border border-white/10 bg-black/90 px-4 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.9),0_0_40px_-15px_rgba(240,178,82,0.35)] sm:px-5"
+              ? "mt-3 h-16 max-w-6xl rounded-full border border-white/10 bg-black/55 px-4 backdrop-blur-xl backdrop-saturate-150 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.9),0_0_40px_-15px_rgba(240,178,82,0.35)] sm:px-5"
               : "mt-0 h-20 max-w-7xl border border-transparent px-2 sm:px-3"
           }`}
         >
@@ -122,7 +122,7 @@ export default function Navbar() {
             </a>
             <div className="hidden sm:block">
               <Magnetic strength={0.3}>
-                <a href="#contact" className="btn-gold !rounded-xl !py-2.5 !text-xs">
+                <a href="#contact" className="btn-gold !py-2.5 !text-xs">
                   <HiOutlinePaperAirplane className="-rotate-45" /> Contact Me
                 </a>
               </Magnetic>
