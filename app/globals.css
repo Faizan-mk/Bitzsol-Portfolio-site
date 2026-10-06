@@ -1,0 +1,156 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+  /* Components use white/black utilities for "foreground"/"background"; light mode swaps them below. */
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-ink: #000000;
+  --color-panel: #0b0b0d;
+  --color-line: rgba(255, 255, 255, 0.08);
+  --color-brand: #f0b252;
+  --color-brand-soft: #f7c873;
+  --color-gold: #f5be62;
+  --color-gold-deep: #f0b252;
+  --color-on-gold: #0a0a0a;
+}
+
+/* Light theme: warm ivory paper, ink text, deeper gold so it stays readable. */
+html.light {
+  --color-white: #17130c;
+  --color-black: #faf7f0;
+  --color-ink: #faf7f0;
+  --color-panel: #ffffff;
+  --color-line: rgba(23, 19, 12, 0.1);
+  --color-brand: #b8721a;
+  --color-brand-soft: #d08a2a;
+  --color-gold: #b06a10;
+  --color-gold-deep: #8f540a;
+  --sig-a: #f0b252;
+  --sig-b: #c98320;
+  --sig-c: #8f540a;
+  color-scheme: light;
+}
+:root { --sig-a: #ffe6b0; --sig-b: #f5be62; --sig-c: #d99a3a; color-scheme: dark; }
+
+html, body { max-width: 100%; overflow-x: clip; }
+body { background: var(--color-ink); color: color-mix(in oklab, var(--color-white) 88%, transparent); transition: background-color 0.5s ease, color 0.5s ease; }
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-thumb { background: color-mix(in oklab, var(--color-white) 20%, transparent); border-radius: 3px; }
+
+/* Panels: cards with a hairline border that lights up gold on hover. */
+.panel {
+  background: var(--color-panel);
+  border: 1px solid var(--color-line);
+  border-radius: 1rem;
+  transition: translate 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease, box-shadow 0.35s ease, background-color 0.5s ease;
+}
+html.light .panel { box-shadow: 0 1px 2px rgba(23, 19, 12, 0.04), 0 8px 24px -12px rgba(23, 19, 12, 0.08); }
+.panel-hover:hover {
+  translate: 0 -4px;
+  border-color: rgba(240, 178, 82, 0.4);
+  box-shadow: 0 24px 48px -16px rgba(240, 178, 82, 0.22);
+}
+
+/* Spotlight: a soft gold light that follows the pointer across a card (vars set by <Effects />). */
+.spotlight { position: relative; }
+.spotlight::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 1;
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(245, 190, 98, 0.13), transparent 45%);
+  opacity: 0; transition: opacity 0.4s ease;
+}
+.spotlight:hover::after { opacity: 1; }
+
+.chip {
+  display: inline-block; padding: 2px 10px; border-radius: 9999px;
+  font-size: 0.6875rem; font-weight: 500;
+  background: rgba(240, 178, 82, 0.12); color: #f8cd85;
+}
+html.light .chip { background: rgba(201, 131, 32, 0.12); color: #9a5a0c; }
+
+.text-on-gold { color: var(--color-on-gold); }
+
+/* Gold gradient text, tuned per theme. */
+.gold-text {
+  background: linear-gradient(90deg, var(--sig-a), var(--sig-b) 50%, var(--sig-c));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+
+/* Gold call-to-action: flat, squared-off, dark text. */
+.btn-gold {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  padding: 0.7rem 1.4rem; border-radius: 0.375rem;
+  background: linear-gradient(135deg, #fbd384, #f0b252); color: var(--color-on-gold); font-weight: 600; font-size: 0.875rem;
+  position: relative; overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, background 0.3s ease;
+}
+.btn-gold:hover { transform: translateY(-2px); box-shadow: 0 10px 28px -8px rgba(240, 178, 82, 0.6); }
+.btn-gold::after {
+  content: ""; position: absolute; top: 0; left: -75%; width: 50%; height: 100%;
+  background: linear-gradient(105deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+  transform: skewX(-20deg); transition: left 0.65s ease;
+}
+.btn-gold:hover::after { left: 135%; }
+
+.btn-outline {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  padding: 0.7rem 1.2rem; border-radius: 0.375rem; font-size: 0.875rem; font-weight: 500;
+  border: 1px solid var(--color-line); color: color-mix(in oklab, var(--color-white) 88%, transparent);
+  transition: border-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+}
+.btn-outline:hover { border-color: var(--color-brand); color: var(--color-white); transform: translateY(-2px); }
+
+.skill-fill { width: 0; background: linear-gradient(90deg, var(--color-gold-deep), var(--sig-a)); }
+
+/* Typewriter caret that rides along after the newest letter. */
+@keyframes caretBlink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+.type-caret {
+  position: absolute; top: 12%; right: -0.1em; width: 0.06em; height: 0.8em;
+  border-radius: 2px; background: linear-gradient(180deg, var(--sig-a), var(--color-gold-deep));
+  box-shadow: 0 0 12px rgba(245, 190, 98, 0.7);
+  animation: caretBlink 0.9s steps(1) infinite;
+}
+
+/* Film grain over the whole page for a tactile, printed feel. */
+.grain {
+  position: fixed; inset: 0; z-index: 120; pointer-events: none; opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+html.light .grain { opacity: 0.035; }
+
+/* Light mode legibility: faded ink that reads fine on black is too faint on ivory,
+   so low-opacity text is darkened (hover states keep working). */
+html.light :is([class*="text-white/2"], [class*="text-white/3"], [class*="text-white/4"]) { color: color-mix(in oklab, var(--color-white) 68%, transparent); }
+html.light :is([class*="text-white/5"], [class*="text-white/6"]) { color: color-mix(in oklab, var(--color-white) 78%, transparent); }
+html.light :is([class*="text-white/7"], [class*="text-white/8"], [class*="text-white/9"]) { color: color-mix(in oklab, var(--color-white) 88%, transparent); }
+html.light [class*="hover:text-white"]:hover { color: var(--color-white); }
+html.light [class*="hover:text-gold"]:hover { color: var(--color-gold); }
+
+/* Giant outlined name in the footer. */
+.outline-name {
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(240, 178, 82, 0.4);
+  background-image: linear-gradient(180deg, rgba(240, 178, 82, 0.22), transparent 75%);
+  -webkit-background-clip: text; background-clip: text;
+}
+html.light .outline-name { -webkit-text-stroke-color: rgba(176, 106, 16, 0.35); background-image: linear-gradient(180deg, rgba(176, 106, 16, 0.14), transparent 75%); }
+
+/* Service card loops (transform/opacity only). */
+@keyframes codeLine { 0%, 100% { transform: scaleX(0.15); } 50% { transform: scaleX(1); } }
+@keyframes appPop { 0%, 100% { transform: scale(1); opacity: 0.55; } 50% { transform: scale(0.82); opacity: 1; } }
+@keyframes dash { to { stroke-dashoffset: -28; } }
+@keyframes dbPulse { 0%, 100% { transform: translateY(0); opacity: 0.6; } 50% { transform: translateY(-4px); opacity: 1; } }
+@keyframes scan { 0%, 100% { transform: translateY(-48px); opacity: 0; } 15%, 85% { opacity: 1; } 50% { transform: translateY(48px); } }
+@keyframes barGrow { 0%, 100% { transform: scaleY(0.55); } 50% { transform: scaleY(1); } }
+
+/* Soft ambient glow. A radial gradient instead of filter: blur() — looks the same, costs almost nothing to paint. */
+.glow { background: radial-gradient(closest-side, rgb(245 158 11 / var(--glow, 0.15)), rgb(245 158 11 / calc(var(--glow, 0.15) * 0.35)) 55%, transparent); }
+
+/* Custom cursor replaces the system one on fine pointers. */
+/* cursor is inherited, so only elements with their own UA cursor need overriding (no costly `*` selector) */
+.has-cursor, .has-cursor :is(a, button, input, textarea, select, label, [role="button"]) { cursor: none !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}

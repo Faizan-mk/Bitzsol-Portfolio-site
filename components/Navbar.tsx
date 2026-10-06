@@ -1,0 +1,196 @@
+"use client";
+
+import { AnimatePresence, motion, useMotionValueEvent, useReducedMotion, useScroll } from "motion/react";
+import { useEffect, useState } from "react";
+import { FaGithub, FaLinkedinIn } from "react-icons/fa6";
+import { HiOutlineDocumentArrowDown, HiOutlinePaperAirplane } from "react-icons/hi2";
+import { navLinks, profile } from "@/lib/data";
+import Signature from "./brand/Signature";
+import ThemeToggle from "./ThemeToggle";
+import Magnetic from "./motion/Magnetic";
+import { INTRO_DELAY } from "./motion/Preloader";
+
+const ease = [0.16, 1, 0.3, 1] as const;
+
+export default function Navbar() {
+  const reduced = useReducedMotion();
+  const { scrollY } = useScroll();
+  const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
+  const [active, setActive] = useState("#home");
+  const [hovered, setHovered] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
+  // the entrance waits for the preloader only once; after that, hide/show is instant
+  const [introDone, setIntroDone] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setIntroDone(true), (INTRO_DELAY + 0.7) * 1000);
+    return () => clearTimeout(t);
+  }, []);
+
+  // Floating pill once scrolled; tucks away on scroll-down, returns on scroll-up.
+  useMotionValueEvent(scrollY, "change", (y) => {
+    const prev = scrollY.getPrevious() ?? 0;
+    setScrolled(y > 40);
+    setHidden(y > 300 && y > prev + 4 && !open);
+    if (y < prev - 4) setHidden(false);
+  });
+
+  // Active link: an observer watches a thin band near the top of the viewport, so nothing is measured per scroll frame.
+  useEffect(() => {
+    const els = navLinks.map((l) => document.querySelector<HTMLElement>(l.href)).filter(Boolean) as HTMLElement[];
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => { if (e.isIntersecting) setActive(`#${e.target.id}`); });
+      },
+      { rootMargin: "-140px 0px -70% 0px" }
+    );
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+  }, [open]);
+
+  const pill = hovered ?? active;
+
+  return (
+    <>
+      <motion.header
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: hidden ? -110 : 0, opacity: 1 }}
+        transition={{ delay: introDone || reduced ? 0 : INTRO_DELAY, duration: 0.6, ease }}
+        className={`fixed inset-x-0 top-0 px-3 sm:px-5 ${open ? "z-[90]" : "z-50"}`}
+      >
+        <nav
+          className={`relative mx-auto flex items-center justify-between transition-[background-color,box-shadow,border-color,margin,height,max-width] duration-500 ${
+            scrolled
+              ? "mt-3 h-16 max-w-6xl rounded-2xl border border-white/10 bg-black/90 px-4 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.9),0_0_40px_-15px_rgba(240,178,82,0.35)] sm:px-5"
+              : "mt-0 h-20 max-w-7xl border border-transparent px-2 sm:px-3"
+          }`}
+        >
+          {/* gold hairline glow along the top edge of the floating pill */}
+          <span
+            aria-hidden
+            className={`pointer-events-none absolute inset-x-10 -top-px h-px bg-linear-to-r from-transparent via-gold/70 to-transparent transition-opacity duration-500 ${
+              scrolled ? "opacity-100" : "opacity-0"
+            }`}
+          />
+
+          <a href="#home" className="group relative flex items-center" aria-label={`${profile.name}, home`}>
+            <Signature className="h-9 w-auto drop-shadow-[0_0_14px_rgba(245,190,98,0.35)] transition-transform duration-500 group-hover:-rotate-3 group-hover:scale-105 sm:h-10" />
+            {/* underline flourish that draws in on hover */}
+            <span className="absolute -bottom-1 left-2 h-px w-0 bg-linear-to-r from-gold to-transparent transition-all duration-500 group-hover:w-[85%]" />
+          </a>
+
+          {/* desktop links: a gold pill slides to whatever you hover, then back to the active section */}
+          <div
+            className="hidden items-center rounded-full border border-white/10 bg-white/[0.03] p-1 lg:flex"
+            onMouseLeave={() => setHovered(null)}
+          >
+            {navLinks.map((l) => (
+              <a
+                key={l.href}
+                href={l.href}
+                onMouseEnter={() => setHovered(l.href)}
+                className={`relative rounded-full px-4 py-2 text-[13px] font-medium transition-colors duration-300 ${
+                  pill === l.href ? "text-on-gold" : "text-white/65 hover:text-white"
+                }`}
+              >
+                {pill === l.href && (
+                  <motion.span
+                    layoutId="nav-pill"
+                    className="absolute inset-0 rounded-full bg-linear-to-r from-[#fbd384] to-gold-deep shadow-[0_4px_18px_-4px_rgba(240,178,82,0.7)]"
+                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  />
+                )}
+                <span className="relative z-10">{l.label}</span>
+              </a>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <a
+              href={profile.resume}
+              download
+              aria-label="Download resume"
+              title="Download resume"
+              className="hidden h-10 w-10 items-center justify-center rounded-xl border border-white/10 text-white/70 transition hover:border-gold/60 hover:text-gold sm:flex"
+            >
+              <HiOutlineDocumentArrowDown size={18} />
+            </a>
+            <div className="hidden sm:block">
+              <Magnetic strength={0.3}>
+                <a href="#contact" className="btn-gold !rounded-xl !py-2.5 !text-xs">
+                  <HiOutlinePaperAirplane className="-rotate-45" /> Contact Me
+                </a>
+              </Magnetic>
+            </div>
+            <button
+              onClick={() => setOpen((o) => !o)}
+              className="relative flex h-10 w-10 flex-col items-center justify-center gap-1.5 rounded-xl border border-white/10 bg-black/40 lg:hidden"
+              aria-label={open ? "Close menu" : "Open menu"}
+              aria-expanded={open}
+            >
+              <motion.span animate={open ? { rotate: 45, y: 4 } : { rotate: 0, y: 0 }} className="block h-0.5 w-5 rounded bg-white" />
+              <motion.span animate={open ? { rotate: -45, y: -4 } : { rotate: 0, y: 0 }} className="block h-0.5 w-5 rounded bg-white" />
+            </button>
+          </div>
+        </nav>
+      </motion.header>
+
+      {/* mobile: full-screen menu, circle wipe from the burger, links rise in one by one */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            key="mobile-menu"
+            initial={{ clipPath: "circle(0% at calc(100% - 40px) 40px)" }}
+            animate={{ clipPath: "circle(150% at calc(100% - 40px) 40px)" }}
+            exit={{ clipPath: "circle(0% at calc(100% - 40px) 40px)" }}
+            transition={{ duration: 0.7, ease: [0.76, 0, 0.24, 1] }}
+            className="fixed inset-0 z-[70] flex flex-col bg-black px-8 pb-10 pt-28 lg:hidden"
+          >
+            <div className="pointer-events-none absolute -right-32 top-20 h-80 w-80 rounded-full glow [--glow:0.15]" />
+            <nav className="flex flex-col gap-1">
+              {navLinks.map((l, i) => (
+                <div key={l.href} className="overflow-hidden">
+                  <motion.a
+                    href={l.href}
+                    onClick={() => setOpen(false)}
+                    initial={{ y: "100%" }}
+                    animate={{ y: 0 }}
+                    exit={{ y: "100%" }}
+                    transition={{ delay: 0.15 + i * 0.05, duration: 0.6, ease }}
+                    className={`flex items-baseline gap-4 py-1.5 text-4xl font-bold ${active === l.href ? "text-gold" : "text-white/85"}`}
+                  >
+                    <span className="font-mono text-xs text-white/30">0{i + 1}</span>
+                    {l.label}
+                  </motion.a>
+                </div>
+              ))}
+            </nav>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ delay: 0.5, duration: 0.5 }}
+              className="mt-auto space-y-5"
+            >
+              <a href={profile.resume} download className="btn-gold w-full">
+                <HiOutlineDocumentArrowDown /> Download CV
+              </a>
+              <div className="flex items-center justify-between text-sm text-white/50">
+                <a href={`mailto:${profile.email}`} className="truncate hover:text-gold">{profile.email}</a>
+                <span className="flex gap-3">
+                  <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="hover:text-gold"><FaLinkedinIn /></a>
+                  <a href={profile.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="hover:text-gold"><FaGithub /></a>
+                </span>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}
