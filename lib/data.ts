@@ -44,8 +44,8 @@ export const education = {
 
 export const experience = [
   {
-    role: "Junior Full Stack Developer",
-    company: "BitzSole",
+    role: "Full Stack Developer (MERN)",
+    company: "Bitzsol",
     period: "Aug 2026 – Present",
     points: [
       "Developing and maintaining full-stack features using the MERN stack (MongoDB, Express.js, React.js, Node.js).",
