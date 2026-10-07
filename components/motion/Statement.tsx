@@ -51,7 +51,7 @@ export default function Statement() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-80px" }}
         transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
-        className="relative h-[460px] sm:h-[560px] lg:h-[640px]"
+        className="relative -mx-5 h-[440px] sm:mx-0 sm:h-[560px] lg:h-[640px]"
       >
         {near && <Studio active={active} running={inView && !reduced} pointer={pointer} />}
       </motion.div>

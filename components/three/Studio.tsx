@@ -316,7 +316,7 @@ function Stage({ active, pointer }: { active: number; pointer: { current: { x: n
     let diff = goal - turn.current.rotation.y;
     diff = Math.atan2(Math.sin(diff), Math.cos(diff));
     turn.current.rotation.y += diff * Math.min(1, dt * 3);
-    const far = size.width < 640 ? 12.5 : 9;
+    const far = size.width < 640 ? 11 : 9;
     camera.position.lerp(new THREE.Vector3(pointer.current.x * 0.8, 3.1 - pointer.current.y * 0.6, far), Math.min(1, dt * 2));
     camera.lookAt(0, 1.45, 0);
   });

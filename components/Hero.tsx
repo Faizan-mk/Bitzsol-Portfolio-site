@@ -353,7 +353,7 @@ export default function Hero() {
                         />
                       )}
                     </span>
-                    <span className="mt-2.5 block truncate text-[13px] font-semibold transition-colors sm:text-[15px]">{s.label}</span>
+                    <span className="mt-2.5 block text-[11px] font-semibold tracking-tight transition-colors min-[400px]:text-[13px] sm:text-[15px] sm:tracking-normal">{s.label}</span>
                   </button>
                 );
               })}
