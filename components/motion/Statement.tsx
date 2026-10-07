@@ -22,6 +22,8 @@ export default function Statement() {
   const ref = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();
   const inView = useInView(ref, { margin: "10% 0px" });
+  // the WebGL canvas only exists near the screen, so phones get its GPU memory back once you scroll past
+  const near = useInView(ref, { margin: "300px 0px" });
   const [active, setActive] = useState(0);
   const [cycle, setCycle] = useState(0); // restarts the timer after a manual pick
   const pointer = useRef({ x: 0, y: 0 });
@@ -51,7 +53,7 @@ export default function Statement() {
         transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
         className="relative h-[460px] sm:h-[560px] lg:h-[640px]"
       >
-        <Studio active={active} running={inView && !reduced} pointer={pointer} />
+        {near && <Studio active={active} running={inView && !reduced} pointer={pointer} />}
       </motion.div>
 
       <div role="tablist" aria-label="Services" className="relative mx-auto mt-2 grid max-w-3xl grid-cols-4 gap-2 sm:gap-4">

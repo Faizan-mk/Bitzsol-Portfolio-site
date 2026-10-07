@@ -345,12 +345,14 @@ function Stage({ active, pointer }: { active: number; pointer: { current: { x: n
 }
 
 export default function Studio({ active, running, pointer }: { active: number; running: boolean; pointer: { current: { x: number; y: number } } }) {
+  // phones get a lighter canvas: fewer pixels and no multisampling keep GPU memory low
+  const compact = typeof window !== "undefined" && window.innerWidth < 768;
   return (
     <Canvas
       frameloop={running ? "always" : "never"}
-      dpr={[1, 1.75]}
+      dpr={compact ? [1, 1.25] : [1, 1.75]}
       camera={{ position: [0, 3.1, 9], fov: 34 }}
-      gl={{ antialias: true, alpha: true }}
+      gl={{ antialias: !compact, alpha: true, powerPreference: compact ? "low-power" : "default" }}
       onCreated={({ gl }) => { gl.toneMapping = THREE.ACESFilmicToneMapping; }}
     >
       <ambientLight intensity={0.55} />
