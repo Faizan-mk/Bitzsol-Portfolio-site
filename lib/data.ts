@@ -1,249 +1,231 @@
-export const profile = {
-  name: "Muhammad Faizan",
-  firstName: "Muhammad",
-  lastName: "Faizan",
-  initials: "MF",
-  role: "Full Stack Developer",
-  tagline:
-    "I build secure, scalable and production-ready web and mobile apps with the MERN stack, Next.js, React Native, Firebase and Supabase. Let's turn your idea into a product people love to use.",
-  email: "faizannaizi007@gmail.com",
-  phone: "+92-303-2798007",
-  phoneHref: "tel:+923032798007",
-  whatsapp: "https://wa.me/923032798007",
-  location: "Rawalpindi, Pakistan",
-  linkedin: "https://linkedin.com/in/muhammad-faizanmk",
-  github: "https://github.com/Faizan-mk",
-  resume: "/resume/Muhammad_Faizan_FullStack_Resume.pdf",
+export const company = {
+  name: "Bitzsol Digital",
+  legalName: "Bitzsol Digital (SMC-PVT) Ltd",
+  initials: "BD",
+  role: "Digital Solutions Company",
+  tagline: "Driving growth, shaping the future through transformation.",
+  website: "https://www.bitzsol.com",
+  websiteLabel: "www.bitzsol.com",
+  email: "Hello@bitzsol.com",
+  phone: "+92 303 0608794",
+  phoneHref: "tel:+923030608794",
+  phone2: "+92 339 0449978",
+  phone2Href: "tel:+923390449978",
+  linkedin: "https://pk.linkedin.com/company/bitzsol",
   about:
-    "Full Stack Developer with hands-on experience across the MERN stack (MongoDB, Express.js, React.js, Node.js), React Native mobile apps, RESTful API development, and both relational (MySQL/Sequelize ORM, PostgreSQL/Supabase) and NoSQL (MongoDB) databases. Computer Science graduate (CGPA 3.44/4.0) comfortable working on backend, frontend, or full-stack roles — from designing secure, JWT-authenticated APIs to building responsive, production-deployed React interfaces. Strong problem-solving skills, quick learner, and eager to contribute to real-world engineering teams.",
+    "Bitzsol Digital (SMC-PVT) Ltd is a technology-driven digital solutions company. We build web, e-commerce and cloud products, automate workflows with AI and GoHighLevel, and grow brands through marketing, SEO and social media — all at fixed, transparent rates.",
+  philosophy:
+    "As a leading contributor to driving change, we understand the importance of continued self-reinvention. We accomplish this by investing in next-generation capabilities that enhance our differentiation in key growth areas and by investing in talent to ensure we have specialized skills to resolve business problems. Backed by our expertise and diverse global workforce, our ultimate goal is to offer sustainable and meaningful value across all directions.",
+  mission:
+    "To empower businesses of every size with fast, scalable and affordable digital solutions — combining modern technology, creative thinking and transparent pricing so our clients can optimize how they work, transform how they engage and scale with confidence.",
+  vision:
+    "To be a globally trusted digital partner that helps enterprises and ambitious startups embrace modern technology, rethink their processes and elevate every customer experience — building the next era of digital business.",
+  ctaLine: "Embrace modern technology, rethink processes, and elevate experiences.",
 };
 
 export const navLinks = [
   { href: "#home", label: "Home" },
   { href: "#about", label: "About" },
-  { href: "#experience", label: "Experience" },
-  { href: "#skills", label: "Skills" },
-  { href: "#process", label: "Process" },
-  { href: "#projects", label: "Portfolio" },
+  { href: "#services", label: "Services" },
+  { href: "#why", label: "Why Us" },
+  { href: "#projects", label: "Work" },
   { href: "#contact", label: "Contact" },
 ];
 
-export const stats = [
-  { value: "3.44", label: "CGPA" },
-  { value: "12+", label: "Projects" },
-  { value: "2", label: "Internships" },
-  { value: "5", label: "Certifications" },
+export const snapshot = [
+  { label: "Legal Name", value: "Bitzsol Digital (SMC-PVT) Ltd" },
+  { label: "Website", value: "www.bitzsol.com" },
+  { label: "What We Do", value: "Web, apps, e-commerce, cloud, AI automation, GoHighLevel & digital marketing" },
+  { label: "How We Work", value: "Fixed, transparent pricing" },
+  { label: "Reach", value: "Global clientele" },
+] as const;
+
+export const values = [
+  { num: "01", title: "Innovation", text: "We invest in next-generation capabilities and stay ahead of the curve." },
+  { num: "02", title: "Transparency", text: "Fixed, honest pricing and clear communication at every step." },
+  { num: "03", title: "Quality", text: "Careful craft and specialized talent behind every deliverable." },
+  { num: "04", title: "Partnership", text: "We treat every client's goals as our own and grow alongside them." },
 ];
 
-export const education = {
-  degree: "BS Computer Science",
-  school: "University of Mianwali",
-  period: "2022 – 2026",
-  cgpa: "3.44 / 4.0",
-};
-
-export const experience = [
+export const solutions = [
   {
-    role: "Full Stack Developer (MERN)",
-    company: "Bitzsol",
-    period: "Aug 2026 – Present",
-    points: [
-      "Developing and maintaining full-stack features using the MERN stack (MongoDB, Express.js, React.js, Node.js).",
-      "Building and integrating RESTful APIs with JWT-based authentication and role-based access control.",
-      "Collaborating with the engineering team on code reviews, debugging, and production deployments.",
-    ],
+    title: "Business Applications",
+    text: "We empower enterprises to manage and optimize mission-critical operations across diverse environments, ensuring smooth interactions at every customer touchpoint.",
+    points: ["ERP, workflow & management systems", "Booking, billing & inventory tools", "Dashboards, portals & reporting"],
   },
   {
-    role: "Backend Developer Intern",
-    company: "DevelopersHub Corporation",
-    period: "Mar – Apr 2026",
-    points: [
-      "Built RESTful APIs with Node.js and Express.js, and designed MySQL databases using Sequelize ORM.",
-      "Implemented CRUD operations and tested APIs with Postman.",
-    ],
+    title: "Digital Ecommerce",
+    text: "Dedicated digital commerce solutions that help businesses grow by transforming how they sell and interact in a world where online commerce is part of daily life.",
+    points: ["Custom online stores & marketplaces", "Shopify apps & integrations", "Payments, shipping & orders"],
   },
   {
-    role: "Frontend Developer Intern",
-    company: "Code With Alpha · Remote",
-    period: "Apr – May 2025",
-    points: ["Built responsive front-end interfaces using React.js based on UI/UX design specifications."],
+    title: "Cloud Applications",
+    text: "We help organizations improve functionality, enhance customer experience and reduce maintenance costs with applications built to handle higher workloads and increase ROI.",
+    points: ["Scalable web & SaaS applications", "Performance tuning & maintenance", "Continuous updates & support"],
   },
 ];
 
-export const skillGroups = [
-  {
-    title: "Frontend & Mobile",
-    skills: [
-      { name: "React.js", level: 90 },
-      { name: "React Native (Expo)", level: 80 },
-      { name: "JavaScript", level: 88 },
-      { name: "Tailwind CSS", level: 88 },
-      { name: "Next.js", level: 75 },
-      { name: "HTML / CSS", level: 92 },
-    ],
-  },
-  {
-    title: "Backend & APIs",
-    skills: [
-      { name: "Node.js", level: 88 },
-      { name: "Express.js", level: 88 },
-      { name: "REST API Design", level: 85 },
-      { name: "JWT Auth / RBAC", level: 82 },
-      { name: "bcrypt / Security", level: 80 },
-    ],
-  },
-  {
-    title: "Databases & BaaS",
-    skills: [
-      { name: "MongoDB", level: 85 },
-      { name: "MySQL + Sequelize", level: 85 },
-      { name: "PostgreSQL", level: 80 },
-      { name: "Supabase (Auth & RLS)", level: 85 },
-      { name: "Firebase", level: 80 },
-      { name: "Git / GitHub", level: 88 },
-    ],
-  },
+export const services = [
+  { num: "01", title: "Web Development", text: "Fast, secure and scalable websites and web applications, custom-built around your goals and your users." },
+  { num: "02", title: "AI Automations", text: "Custom AI workflows and chatbots that automate repetitive tasks and free your team to focus on growth." },
+  { num: "03", title: "GoHighLevel (GHL)", text: "GoHighLevel setup and automation: CRM, funnels, follow-ups and appointment booking in one platform." },
+  { num: "04", title: "Digital Marketing", text: "Data-informed campaigns that build awareness, generate leads and turn attention into measurable growth." },
+  { num: "05", title: "Social Media Management", text: "Strategy, content and community management that keep your brand active, engaging and consistent." },
+  { num: "06", title: "SEO", text: "Technical and content optimization that lifts your search visibility and attracts qualified organic traffic." },
+  { num: "07", title: "Graphic Design", text: "Logos, brand identities and marketing creatives with a distinctive look across every channel." },
+  { num: "08", title: "Video Editing", text: "Polished, scroll-stopping edits for promos, social content and product stories." },
 ];
 
-export const toolTags = [
-  "React Native", "Expo / EAS", "Android", "Vite", "React Router", "RESTful APIs", "RBAC",
-  "bcrypt", "Firestore", "Row Level Security", "Postman", "Vercel", "Python",
+export const advantages = [
+  { num: "1", title: "Fixed, low fee", text: "Transparent, fixed pricing across development, automation, marketing, SEO, design and video — premium quality that fits businesses of every size." },
+  { num: "2", title: "Fast", text: "Streamlined processes and a dedicated team deliver quickly, so you stay ahead of the competition and hit your objectives on time." },
+  { num: "3", title: "Scalable", text: "Solutions designed to grow with you — from startups chasing rapid growth to enterprises expanding their digital footprint." },
+  { num: "4", title: "Efficient", text: "Modern technology and best practices optimize your workflows, maximizing return on investment with minimal resource expenditure." },
+];
+
+export const approach = [
+  { step: "01", title: "Optimize", text: "We leverage customer-centric, cutting-edge talent and technology to deliver higher business efficiency." },
+  { step: "02", title: "Transform", text: "We reimagine processes and systems with holistic solutions that create superior enterprise value." },
+  { step: "03", title: "Scale", text: "We enable future-ready enterprises with long-term growth in a state of perpetual reinvention." },
 ];
 
 export const process = [
-  { step: "01", title: "Discover", text: "Understand the goal, the users and the requirements, then agree on scope and milestones." },
-  { step: "02", title: "Design", text: "Plan the data model, API contracts and UI flows so the build has a clear blueprint." },
-  { step: "03", title: "Develop", text: "Build clean, tested features in small increments with regular demos and feedback." },
-  { step: "04", title: "Deploy", text: "Ship to production on Vercel or EAS, monitor, and keep improving after launch." },
+  { step: "01", title: "Discover", text: "We learn your goals, users and constraints." },
+  { step: "02", title: "Design", text: "We shape the experience, structure and brand." },
+  { step: "03", title: "Build", text: "Agile development with regular progress demos." },
+  { step: "04", title: "Launch", text: "Rigorous testing, then go live with confidence." },
+  { step: "05", title: "Support", text: "Ongoing maintenance, optimization and growth." },
 ];
 
 export type Project = {
+  category: string;
   title: string;
   image: string;
   description: string;
   tags: string[];
-  link?: { href: string; label: string; kind: "live" | "apk" };
 };
 
 export const projects: Project[] = [
   {
-    title: "Rishta & Rang — Matrimonial App",
-    image: "/assets/proj-rishta.jpg",
-    description:
-      "Android matrimonial app built with React Native and Expo for creating profiles, browsing and filtering matches, and connecting with potential partners. Built and distributed via EAS.",
-    tags: ["React Native", "Expo", "Android"],
-    link: { href: "https://expo.dev/artifacts/eas/jIZ1olZZROoaaL-alutumpLzzF-uDGyvIFz1QV_FkkQ.apk", label: "Download APK", kind: "apk" },
-  },
-  {
-    title: "The Coffee Bean & Tea Leaf Website",
-    image: "/assets/proj-cblt.jpg",
-    description:
-      "Brand website for The Coffee Bean & Tea Leaf Pakistan showcasing coffee, tea, food and cakes menus, brand story, and a store locator. Responsive React SPA deployed on Vercel.",
-    tags: ["React", "Vite", "Vercel"],
-    link: { href: "https://cblt-cofee-website.vercel.app", label: "Live Demo", kind: "live" },
-  },
-  {
-    title: "Coffee Shop Website",
-    image: "/assets/proj-coffee-shop.jpg",
-    description:
-      "Full-stack coffee shop landing page with categorized menu, checkout & order flow, newsletter signup, contact form, and real authentication (signup, login, forgot password). Supabase backend with Row Level Security.",
-    tags: ["React", "Vite", "Tailwind", "Supabase"],
-    link: { href: "https://cofee-website-alpha-psi.vercel.app/", label: "Live Demo", kind: "live" },
-  },
-  {
-    title: "Hostel Management System",
-    image: "/assets/proj-hostel.jpg",
-    description:
-      "Full-stack hostel management platform with Admin and Student dashboards. Includes room management, fee tracking, invoices, notices, mess schedule, complaints, and role-based access with JWT auth.",
-    tags: ["React", "Node.js", "MySQL", "JWT"],
-    link: { href: "https://my-react-app-omega-nine-26.vercel.app", label: "Live Demo", kind: "live" },
-  },
-  {
-    title: "AI-Based Travel Planner",
-    image: "/assets/proj-travel.jpg",
-    description:
-      "AI-powered travel platform with destination suggestions, cost estimation, hotel/transport booking, AI chatbot, budget planner, expense tracker, weather updates, SOS module, and eco-friendly tips. MERN + Python/Flask.",
-    tags: ["MERN", "Python", "AI", "AWS"],
-  },
-  {
-    title: "Gurgaon Real Estate Market Analysis",
-    image: "/assets/proj-realestate.jpg",
-    description:
-      "Analyzed property prices and trends across the Gurgaon real estate market, studying the impact of location, property type, and size on pricing. Performed data cleaning and EDA.",
-    tags: ["Python", "Pandas", "EDA"],
-  },
-  {
-    title: "E-Commerce Database Design",
+    category: "E-Commerce · Shopify App",
+    title: "Instagram Feeds for Shopify",
     image: "/assets/proj-ecommerce.jpg",
     description:
-      "Designed a normalized relational schema with tables for users, products, orders, payments, and inventory. Defined PK/FK relationships for scalability and integrity.",
-    tags: ["MySQL", "Schema Design"],
+      "Connects a store to its Instagram account to showcase live feeds and stories, boosting social proof and visual appeal with easy customization.",
+    tags: ["Live feeds", "Stories", "Customizable"],
   },
   {
-    title: "User Authentication System",
+    category: "Aviation",
+    title: "Amelia OS",
+    image: "/assets/proj-hostel.jpg",
+    description:
+      "An aviation management system for plane inspections, defect tracking, reporting and hangar planning, with OCR data capture and time-management tools.",
+    tags: ["OCR", "Inspections", "Hangar planning"],
+  },
+  {
+    category: "Travel & Planning",
+    title: "LastBadTrip",
+    image: "/assets/proj-travel.jpg",
+    description:
+      "A booking management platform for activity planning and voyages, with detailed financial reports, Stripe payments and multi-language support.",
+    tags: ["Stripe", "Multi-language", "Reports"],
+  },
+  {
+    category: "Healthcare",
+    title: "Secret Align",
+    image: "/assets/proj-password.jpg",
+    description:
+      "Lets dentists order custom clear aligners online, with 3D scan uploads, treatment instructions, online payments and patient history in one workflow.",
+    tags: ["3D scans", "Payments", "Patient history"],
+  },
+  {
+    category: "Finance",
+    title: "Consultation Amaltitek",
+    image: "/assets/proj-crypto.jpg",
+    description:
+      "A financial management system covering assets and liabilities, tax, company finances, balance sheets, trial balance, journal entries and reporting.",
+    tags: ["Balance sheets", "Journals", "Tax"],
+  },
+  {
+    category: "Campaigns",
+    title: "Official Truck BR",
+    image: "/assets/proj-twitter.jpg",
+    description:
+      "A coupon-redemption platform for live campaigns serving thousands of daily visitors, with effortless bulk coupon creation for businesses.",
+    tags: ["Coupons", "Bulk creation", "Campaigns"],
+  },
+  {
+    category: "E-Commerce",
+    title: "Barnard PT: Móveis Online",
+    image: "/assets/proj-coffee-shop.jpg",
+    description:
+      "A full-featured furniture e-commerce platform with inventory tracking, shipping management, carts, online payments and order management.",
+    tags: ["Inventory", "Shipping", "Payments"],
+  },
+  {
+    category: "Marketing & Design",
+    title: "NetBezig",
+    image: "/assets/proj-cblt.jpg",
+    description:
+      "A marketing services agency platform with seamless online payments, efficient management tools and a clean, user-friendly design.",
+    tags: ["Payments", "Management tools", "UX"],
+  },
+  {
+    category: "Education · Game",
+    title: "Abcedlalecture",
+    image: "/assets/proj-rishta.jpg",
+    description:
+      "An interactive game that helps students learn French through engaging challenges and educational activities.",
+    tags: ["Gamified", "French", "Interactive"],
+  },
+  {
+    category: "Billing & Fintech",
+    title: "Adly",
     image: "/assets/proj-auth.jpg",
     description:
-      "Full-stack auth system with secure registration, login, JWT-based session management, bcrypt hashing, protected routes, Context API for global auth state, and localStorage persistence.",
-    tags: ["MERN", "JWT", "Security"],
+      "Users top up accounts, pay by uploading receipts and withdraw funds, with a built-in affiliate program that rewards referrals.",
+    tags: ["Top-ups", "Receipts", "Affiliate"],
   },
   {
-    title: "Twitter/X Frontend Clone",
-    image: "/assets/proj-twitter.jpg",
-    description: "Fully responsive front-end clone of Twitter/X using HTML and Tailwind CSS with pixel-perfect UI replication across all devices.",
-    tags: ["HTML", "Tailwind CSS"],
+    category: "Customizer",
+    title: "Interior Design Systems",
+    image: "/assets/proj-realestate.jpg",
+    description:
+      "An intuitive wardrobe configurator: customize window sizes, frames, doors, colors and materials to fit any space.",
+    tags: ["Configurator", "Materials", "Custom sizes"],
   },
   {
-    title: "PssOp — Password Manager",
-    image: "/assets/proj-password.jpg",
-    description: "Secure password manager with React.js frontend and Express.js/MongoDB backend.",
-    tags: ["MERN", "Security"],
-  },
-  {
-    title: "CryptoWallet Dashboard",
-    image: "/assets/proj-crypto.jpg",
-    description: "Responsive React.js admin dashboard with analytics and transaction tracking.",
-    tags: ["React.js", "Dashboard"],
-  },
-  {
-    title: "Personal Portfolio Website",
+    category: "Automotive",
+    title: "Smstech – Sehgal Motorsports",
     image: "/assets/proj-portfolio.jpg",
-    description: "This portfolio, built with Next.js, React and Tailwind CSS, with scroll animations and a fully responsive layout.",
-    tags: ["Next.js", "React", "Tailwind CSS"],
+    description:
+      "A Shopify-integrated system to post ads, manage vehicle sales and purchases, run inspections and generate reports in one platform.",
+    tags: ["Shopify", "Inspections", "Reports"],
   },
-];
-
-export const certifications = [
-  { title: "Data Analyst Course", detail: "Python, NumPy, Pandas, Seaborn — Code With Harry" },
-  { title: "Soft Skills Development Program", detail: "PEEF — Nov 2024" },
-  { title: "MS Word, Excel, PowerPoint", detail: "TEVTA — Jun–Aug 2022" },
-  { title: "Frontend Development Internship", detail: "CodeAlpha — Apr–May 2025" },
-  { title: "Back End Development Internship", detail: "DevelopersHub Corporation — Mar–Apr 2026" },
 ];
 
 export const testimonials = [
   {
-    quote: "Faizan delivered clean, well-structured backend APIs ahead of schedule. His understanding of REST principles and database design made collaboration seamless.",
-    name: "Saad Hassan",
-    title: "Supervisor, DevelopersHub",
-    initials: "SH",
+    quote:
+      "Bitzsol took our idea and turned it into a polished, working product. Communication was clear throughout, deadlines were respected, and the final result matched exactly what we had in mind.",
+    name: "Steven Febry",
+    title: "Client",
+    initials: "SF",
   },
   {
-    quote: "Great front-end skills and a quick learner. Faizan adapted to our React.js workflow in days and contributed meaningfully to the project.",
-    name: "CodeAlpha Team",
-    title: "Frontend Internship",
-    initials: "CA",
+    quote:
+      "The team understood our business quickly and delivered a clean, professional digital presence. They were responsive, transparent about pricing and a pleasure to work with from start to finish.",
+    name: "Advisory Friends",
+    title: "Client",
+    initials: "AF",
   },
   {
-    quote: "Collaborated with Faizan on the AI Travel Planner project. He handled the backend architecture and database design with minimal supervision.",
-    name: "Abdullah Khan",
-    title: "Project Teammate",
-    initials: "AK",
+    quote:
+      "Bitzsol brought both technical depth and creative thinking to our project. Fast turnaround, reliable delivery and a genuine willingness to go the extra mile — we would happily work with them again.",
+    name: "Selr AI Ltd",
+    title: "Client",
+    initials: "SA",
   },
 ];
 
-export const achievements = [
-  { icon: "trophy", title: "Dean's List Honor", detail: "Awarded for academic excellence in BS Computer Science" },
-  { icon: "users", title: "PEEF Soft Skills Program", detail: "Selected for Punjab Educational Endowment Fund training — Nov 2024" },
-  { icon: "code", title: "Top Project — AI Travel Planner", detail: "Recognized as standout team project in university capstone showcase" },
-  { icon: "cert", title: "Backend Development Certification", detail: "Completed intensive internship at DevelopersHub Corporation — 2026" },
-] as const;
+export const trustedBy = ["Steven Febry", "Advisory Friends", "Selr AI Ltd"];

@@ -1,271 +1,379 @@
 "use client";
 
-import Image from "next/image";
-import { AnimatePresence, motion, useInView, useMotionValue, useReducedMotion, useSpring, useTransform } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
-import { FaGithub, FaLinkedinIn, FaNodeJs, FaReact } from "react-icons/fa6";
-import { HiOutlineMapPin } from "react-icons/hi2";
-import { SiMongodb, SiNextdotjs } from "react-icons/si";
-import { profile } from "@/lib/data";
 import Magnetic from "./motion/Magnetic";
 import { INTRO_DELAY } from "./motion/Preloader";
 
-const roles = ["Full Stack Developer", "MERN Stack Developer", "React Native Developer", "Next.js Developer"];
 const ease = [0.16, 1, 0.3, 1] as const;
-const TYPE_STEP = 0.09; // seconds per typed character
+const HOLD = 4.2; // seconds each shape holds before the bits move on
 
-const badges = [
-  { Icon: FaReact, label: "React", className: "left-[2%] top-[18%]", color: "#61dafb", float: 10, dur: 4.5 },
-  { Icon: SiNextdotjs, label: "Next.js", className: "right-[0%] top-[28%]", color: "currentColor", float: -12, dur: 5.2 },
-  { Icon: FaNodeJs, label: "Node.js", className: "left-[0%] top-[58%]", color: "#68a063", float: -9, dur: 4.8 },
-  { Icon: SiMongodb, label: "MongoDB", className: "right-[4%] top-[66%]", color: "#47a248", float: 11, dur: 5.6 },
+// The field opens on the Bitzsol bulb, then spells out what we do. "bulb" is drawn, the rest are typed.
+const SHAPES = [
+  { word: "bulb", label: "Bitzsol", services: "Ideas turned into working digital products." },
+  { word: "Build.", label: "Build", services: "Websites, web apps, e-commerce stores and cloud applications." },
+  { word: "Automate.", label: "Automate", services: "AI automations, chatbots and GoHighLevel CRM, funnels and booking." },
+  { word: "Grow.", label: "Grow", services: "Digital marketing, SEO and social media management." },
+  { word: "Design.", label: "Design", services: "Logos, brand identities, marketing creatives and video editing." },
 ];
+
+type Target = { xy: Float32Array; accent: Uint8Array; count: number; gap: number };
+
+// Rasterise one shape off-screen and sample its filled pixels into a grid of target points.
+function sample(word: string, w: number, h: number, mobile: boolean, maxN: number): Target {
+  const c = document.createElement("canvas");
+  c.width = w; c.height = h;
+  const g = c.getContext("2d", { willReadFrequently: true })!;
+  const family = getComputedStyle(document.body).fontFamily;
+  const cx = w / 2;
+  const cy = h * (mobile ? 0.36 : 0.4);
+
+  // one size for every word, fitted to the longest so the rhythm never jumps
+  let size = Math.min(h * (mobile ? 0.2 : 0.34), 320);
+  g.font = `800 ${size}px ${family}`;
+  const longest = Math.max(...SHAPES.filter((s) => s.word !== "bulb").map((s) => g.measureText(s.word).width));
+  size *= Math.min(1, (w * (mobile ? 0.92 : 0.8)) / longest);
+
+  // accent region: the full stop, or the base of the bulb
+  let accentFrom = Infinity;
+  g.fillStyle = "#fff";
+  if (word === "bulb") {
+    const r = mobile ? Math.min(w * 0.26, h * 0.13) : size * 0.62;
+    const t = r * 0.36; // ring thickness
+    const top = cy - r * 0.15;
+    g.lineWidth = t;
+    g.lineCap = "butt";
+    g.beginPath();
+    g.arc(cx, top, r, Math.PI * 0.72, Math.PI * 2.28);
+    g.stroke();
+    // tapered tails curling down toward the base
+    for (const side of [-1, 1]) {
+      const a = side < 0 ? Math.PI * 0.72 : Math.PI * 0.28;
+      const ox = cx + Math.cos(a) * r, oy = top + Math.sin(a) * r;
+      const nx = Math.cos(a), ny = Math.sin(a);
+      g.beginPath();
+      g.moveTo(ox + nx * t / 2, oy + ny * t / 2);
+      g.lineTo(ox - nx * t / 2, oy - ny * t / 2);
+      g.lineTo(cx + side * r * 0.36, top + r * 1.22);
+      g.closePath();
+      g.fill();
+    }
+    accentFrom = top + r * 1.3;
+    g.beginPath();
+    g.arc(cx, top + r * 1.38, r * 0.3, 0, Math.PI);
+    g.closePath();
+    g.fill();
+  } else {
+    g.font = `800 ${size}px ${family}`;
+    g.textAlign = "center";
+    g.textBaseline = "middle";
+    g.fillText(word, cx, cy);
+    const full = g.measureText(word).width;
+    const dot = g.measureText(".").width;
+    accentFrom = cx + full / 2 - dot * 1.05;
+  }
+
+  const data = g.getImageData(0, 0, w, h).data;
+  let gap = 3;
+  let pts: number[] = [];
+  // widen the grid until the shape fits the particle budget
+  for (;;) {
+    pts = [];
+    for (let y = 0; y < h; y += gap) for (let x = 0; x < w; x += gap) if (data[(y * w + x) * 4 + 3] > 140) pts.push(x, y);
+    if (pts.length / 2 <= maxN) break;
+    gap++;
+  }
+  const n = pts.length / 2;
+  // shuffle so a different scatter of bits peels away on every morph
+  for (let i = n - 1; i > 0; i--) {
+    const j = (Math.random() * (i + 1)) | 0;
+    [pts[i * 2], pts[j * 2]] = [pts[j * 2], pts[i * 2]];
+    [pts[i * 2 + 1], pts[j * 2 + 1]] = [pts[j * 2 + 1], pts[i * 2 + 1]];
+  }
+  const accent = new Uint8Array(n);
+  for (let i = 0; i < n; i++) {
+    const v = word === "bulb" ? pts[i * 2 + 1] : pts[i * 2];
+    accent[i] = v >= accentFrom ? 1 : 0;
+  }
+  return { xy: Float32Array.from(pts), accent, count: n, gap };
+}
 
 export default function Hero() {
   const reduced = useReducedMotion();
-  const sectionRef = useRef<HTMLElement>(null);
-  // looping decorations only run while the hero is actually on screen
-  const live = useInView(sectionRef) && !reduced;
-
-  useEffect(() => {
-    if (!live) return;
-    const id = setInterval(() => setRole((r) => (r + 1) % roles.length), 2600);
-    return () => clearInterval(id);
-  }, [live]);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const morphRef = useRef<(i: number) => void>(() => {});
+  const [active, setActive] = useState(0);
+  const [cycleKey, setCycleKey] = useState(0); // restarts the auto-advance after a manual pick
   const d = reduced ? 0 : INTRO_DELAY;
-  const [role, setRole] = useState(0);
 
-
-
-  // portrait leans toward the pointer
-  const mx = useMotionValue(0);
-  const my = useMotionValue(0);
-  const sx = useSpring(mx, { stiffness: 80, damping: 18 });
-  const sy = useSpring(my, { stiffness: 80, damping: 18 });
-  const rotY = useTransform(sx, [-0.5, 0.5], [-8, 8]);
-  const rotX = useTransform(sy, [-0.5, 0.5], [6, -6]);
-  const shiftX = useTransform(sx, [-0.5, 0.5], [-18, 18]);
-  const glowX = useTransform(sx, [-0.5, 0.5], [-60, 60]);
-
-  // Typewriter: "I’m Muhammad Faizan" appears one character at a time once the preloader lifts.
-  const words = [`I’m`, ...profile.name.split(" ")];
-  const totalChars = words.join("").length;
-  const typeStart = d + 0.2;
-  const t = typeStart + totalChars * TYPE_STEP; // everything else waits for the name to finish
-  const [typed, setTyped] = useState(0);
-
+  // The particle engine: lives entirely outside React state for speed.
   useEffect(() => {
-    if (reduced) { setTyped(totalChars); return; }
+    const wrap = wrapRef.current, canvas = canvasRef.current;
+    if (!wrap || !canvas) return;
+    const ctx = canvas.getContext("2d")!;
+    const still = !!reduced;
+
+    let W = 0, H = 0, dpr = 1, mobile = false, size = 2;
+    let targets: Target[] = [];
+    let N = 0;
+    let px = new Float32Array(0), py = new Float32Array(0), vx = new Float32Array(0), vy = new Float32Array(0);
+    let tx = new Float32Array(0), ty = new Float32Array(0), hx = new Float32Array(0), hy = new Float32Array(0);
+    let tone = new Uint8Array(0), base = new Uint8Array(0), free = new Uint8Array(0), phase = new Float32Array(0);
+    let current = 0;
+    const mouse = { x: -9999, y: -9999 };
+    let colors = ["#fff", "#d5ff27", "#7f3aed", "#9f7aea"];
+    const readColors = () => {
+      const s = getComputedStyle(document.documentElement);
+      const v = (n: string, f: string) => s.getPropertyValue(n).trim() || f;
+      colors = [v("--color-white", "#fff"), v("--color-neon", "#d5ff27"), v("--color-brand", "#7f3aed"), v("--color-brand-soft", "#9f7aea")];
+    };
+
+    const assign = (idx: number, burst: boolean) => {
+      current = idx;
+      const t = targets[idx];
+      const bulb = SHAPES[idx].word === "bulb";
+      for (let i = 0; i < N; i++) {
+        if (i < t.count) {
+          free[i] = 0;
+          tx[i] = t.xy[i * 2]; ty[i] = t.xy[i * 2 + 1];
+          // the bulb glows violet with a neon base, words are ink with a neon full stop
+          tone[i] = t.accent[i] ? 1 : bulb ? (base[i] === 0 ? 2 : 3) : base[i];
+        } else {
+          // leftover bits drift as dust around the field
+          free[i] = 1;
+          hx[i] = Math.random() * W; hy[i] = Math.random() * H;
+          tone[i] = base[i] === 0 ? 0 : 2;
+        }
+        if (burst) { vx[i] += (Math.random() - 0.5) * 14; vy[i] += (Math.random() - 0.5) * 14; }
+      }
+    };
+
+    const build = () => {
+      const r = wrap.getBoundingClientRect();
+      W = Math.round(r.width); H = Math.round(r.height);
+      if (!W || !H) return;
+      mobile = W < 640;
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = W * dpr; canvas.height = H * dpr;
+      canvas.style.width = `${W}px`; canvas.style.height = `${H}px`;
+      const maxN = mobile ? 2600 : 6500;
+      targets = SHAPES.map((s) => sample(s.word, W, H, mobile, maxN));
+      // bits nearly touch so the letterforms read solid, with a hairline of space between them
+      size = Math.max(...targets.map((t) => t.gap)) * 0.78;
+      const nextN = Math.max(...targets.map((t) => t.count)) + (mobile ? 120 : 260);
+      if (nextN !== N) {
+        N = nextN;
+        px = new Float32Array(N); py = new Float32Array(N); vx = new Float32Array(N); vy = new Float32Array(N);
+        tx = new Float32Array(N); ty = new Float32Array(N); hx = new Float32Array(N); hy = new Float32Array(N);
+        tone = new Uint8Array(N); base = new Uint8Array(N); free = new Uint8Array(N); phase = new Float32Array(N);
+        for (let i = 0; i < N; i++) {
+          px[i] = Math.random() * W; py[i] = Math.random() * H;
+          const roll = Math.random();
+          base[i] = roll < 0.94 ? 0 : roll < 0.98 ? 1 : 2;
+          phase[i] = Math.random() * Math.PI * 2;
+        }
+      }
+      assign(current, false);
+      if (still) for (let i = 0; i < N; i++) { px[i] = free[i] ? hx[i] : tx[i]; py[i] = free[i] ? hy[i] : ty[i]; }
+    };
+
+    const startAt = performance.now() + d * 1000;
+    const draw = (now: number) => {
+      const fade = still ? 1 : Math.max(0, Math.min(1, (now - startAt) / 900));
+      const time = now / 1000;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, W, H);
+      if (!fade) return;
+      const R = mobile ? 70 : 120, R2 = R * R;
+      const pull = now < startAt ? 0 : 0.055;
+
+      if (!still) {
+        for (let i = 0; i < N; i++) {
+          let gx: number, gy: number, k: number;
+          if (free[i]) {
+            gx = hx[i] + Math.sin(time * 0.35 + phase[i]) * 40;
+            gy = hy[i] + Math.cos(time * 0.28 + phase[i]) * 40;
+            k = 0.004;
+          } else {
+            gx = tx[i] + Math.sin(time * 1.6 + phase[i]) * 0.7;
+            gy = ty[i] + Math.cos(time * 1.3 + phase[i]) * 0.7;
+            k = pull;
+          }
+          vx[i] = (vx[i] + (gx - px[i]) * k) * 0.84;
+          vy[i] = (vy[i] + (gy - py[i]) * k) * 0.84;
+          const dx = px[i] - mouse.x, dy = py[i] - mouse.y, d2 = dx * dx + dy * dy;
+          if (d2 < R2 && d2 > 0.01) {
+            const dist = Math.sqrt(d2), f = (1 - dist / R) * 5;
+            vx[i] += (dx / dist) * f; vy[i] += (dy / dist) * f;
+          }
+          px[i] += vx[i]; py[i] += vy[i];
+        }
+      }
+
+      // one pass per colour keeps fillStyle switches to a handful per frame
+      for (let c = 0; c < 4; c++) {
+        ctx.fillStyle = colors[c];
+        for (const loose of [0, 1]) {
+          ctx.globalAlpha = fade * (loose ? 0.28 : 1);
+          const s = loose ? size * 0.6 : size;
+          for (let i = 0; i < N; i++) {
+            if (free[i] !== loose) continue;
+            const dx = px[i] - mouse.x, dy = py[i] - mouse.y;
+            const lit = dx * dx + dy * dy < R2 * 1.6; // bits near the pointer catch the neon
+            if ((lit ? 1 : tone[i]) !== c) continue;
+            ctx.fillRect(px[i] - s / 2, py[i] - s / 2, s, s);
+          }
+        }
+      }
+      ctx.globalAlpha = 1;
+    };
+
+    let raf = 0, running = false;
+    const loop = (now: number) => { draw(now); raf = requestAnimationFrame(loop); };
+    const play = () => { if (!running && !still) { running = true; raf = requestAnimationFrame(loop); } };
+    const pause = () => { running = false; cancelAnimationFrame(raf); };
+
+    morphRef.current = (i: number) => {
+      if (!targets.length) return;
+      assign(i, !still);
+      if (still) { for (let j = 0; j < N; j++) { px[j] = free[j] ? hx[j] : tx[j]; py[j] = free[j] ? hy[j] : ty[j]; } draw(performance.now()); }
+    };
+
+    const onMove = (e: PointerEvent) => {
+      const r = canvas.getBoundingClientRect();
+      mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top;
+    };
+    const onLeave = () => { mouse.x = mouse.y = -9999; };
+    // a click or tap sends a shockwave through the field
+    const onDown = (e: PointerEvent) => {
+      if (still) return;
+      const r = canvas.getBoundingClientRect();
+      const cx = e.clientX - r.left, cy = e.clientY - r.top;
+      for (let i = 0; i < N; i++) {
+        const dx = px[i] - cx, dy = py[i] - cy, dist = Math.sqrt(dx * dx + dy * dy) || 1;
+        if (dist < 320) { const f = (1 - dist / 320) * 38; vx[i] += (dx / dist) * f; vy[i] += (dy / dist) * f; }
+      }
+    };
+
+    let ready = false;
+    const io = new IntersectionObserver(([e]) => { if (ready) { if (e.isIntersecting) play(); else pause(); } });
+    const ro = new ResizeObserver(() => { if (ready) { build(); if (still) draw(performance.now()); } });
+    const mo = new MutationObserver(() => { readColors(); if (still) draw(performance.now()); });
+
+    document.fonts.ready.then(() => {
+      ready = true;
+      readColors();
+      build();
+      if (still) draw(performance.now()); else play();
+      io.observe(wrap); ro.observe(wrap);
+      mo.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    });
+    canvas.addEventListener("pointermove", onMove);
+    canvas.addEventListener("pointerleave", onLeave);
+    canvas.addEventListener("pointerdown", onDown);
+
+    return () => {
+      pause(); io.disconnect(); ro.disconnect(); mo.disconnect();
+      canvas.removeEventListener("pointermove", onMove);
+      canvas.removeEventListener("pointerleave", onLeave);
+      canvas.removeEventListener("pointerdown", onDown);
+    };
+  }, [reduced, d]);
+
+  useEffect(() => { morphRef.current(active); }, [active]);
+
+  // auto-advance once the intro has landed
+  useEffect(() => {
+    if (reduced) return;
+    const first = cycleKey === 0 ? d * 1000 + 2400 : HOLD * 1000;
     let id: ReturnType<typeof setInterval>;
     const start = setTimeout(() => {
-      id = setInterval(() => setTyped((n) => (n >= totalChars ? (clearInterval(id), n) : n + 1)), TYPE_STEP * 1000);
-    }, typeStart * 1000);
+      setActive((a) => (a + 1) % SHAPES.length);
+      id = setInterval(() => setActive((a) => (a + 1) % SHAPES.length), HOLD * 1000);
+    }, first);
     return () => { clearTimeout(start); clearInterval(id); };
-  }, [reduced, totalChars, typeStart]);
+  }, [reduced, d, cycleKey]);
+
+  const pick = (i: number) => { setActive(i); setCycleKey((k) => k + 1); };
 
   return (
-    <section
-      ref={sectionRef}
-      id="home"
-      className="relative overflow-hidden"
-      onMouseMove={(e) => {
-        mx.set(e.clientX / window.innerWidth - 0.5);
-        my.set(e.clientY / window.innerHeight - 0.5);
-      }}
-    >
-      <motion.div
-        style={{ x: glowX }}
-        initial={{ opacity: 0, scale: 0.6 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: d, duration: 1.6, ease }}
-        className="pointer-events-none absolute -right-40 top-10 h-[38rem] w-[38rem] rounded-full glow [--glow:0.20]"
-      />
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_at_center,#000_30%,transparent_75%)]" />
+    <section id="home" className="relative h-svh min-h-[640px] overflow-hidden">
+      <div aria-hidden className="pointer-events-none absolute left-1/2 top-[38%] h-[44rem] w-[44rem] -translate-x-1/2 -translate-y-1/2 rounded-full glow [--glow:0.2]" />
 
-      <div data-hero-content className="relative mx-auto grid min-h-screen max-w-7xl items-center gap-6 px-5 pt-24 sm:px-8 lg:grid-cols-[1.1fr_0.9fr] lg:pt-20">
-        <div data-hero-text className="order-2 pb-12 lg:order-1 lg:pb-0">
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: d, duration: 0.7, ease }}
-            className="mb-4 inline-flex items-center gap-2 rounded-full border border-gold/20 bg-gold/5 px-3 py-1 text-xs text-white/60"
-          >
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-gold opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-gold" />
-            </span>
-            Available for work
-          </motion.p>
-
-          <h1 className="text-4xl font-extrabold leading-[1.05] text-white sm:text-6xl xl:text-7xl" aria-label={`I'm ${profile.name}`}>
-            {(() => {
-              let idx = 0;
-              return words.map((w, wi) => (
-                <span key={wi} className={`relative mr-[0.25em] inline-flex pb-1 ${wi === words.length - 1 ? "text-brand" : ""}`} aria-hidden>
-                  {wi === 0 && typed === 0 && <span className="type-caret" style={{ left: 0, right: "auto" }} />}
-                  {[...w].map((ch) => {
-                    const i = idx++;
-                    const shown = i < typed;
-                    return (
-                      <span key={i} className="relative inline-flex">
-                        {/* letters stay in the layout while hidden so the line never reflows */}
-                        <motion.span
-                          className="inline-block"
-                          initial={false}
-                          animate={shown ? { opacity: 1, y: 0, scale: 1, filter: "blur(0px)" } : { opacity: 0, y: 12, scale: 0.6, filter: "blur(6px)" }}
-                          transition={{ duration: 0.35, ease }}
-                        >
-                          {ch}
-                        </motion.span>
-                        {i === typed - 1 && <span className="type-caret" />}
-                      </span>
-                    );
-                  })}
-                </span>
-              ));
-            })()}
-          </h1>
-
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: t + 0.1, duration: 0.8, ease }}
-            className="mt-2 flex flex-wrap items-baseline gap-x-2 text-2xl font-bold leading-tight text-white sm:text-4xl"
-          >
-            <span>Expert</span>
-            <span className="relative inline-flex h-[1.25em] w-full overflow-hidden sm:w-auto">
-              <AnimatePresence mode="wait">
-                <motion.span
-                  key={roles[role]}
-                  initial={{ y: "100%", opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  exit={{ y: "-100%", opacity: 0 }}
-                  transition={{ duration: 0.5, ease }}
-                  className="inline-block whitespace-nowrap bg-linear-to-r from-white to-gold bg-clip-text text-transparent"
-                >
-                  {roles[role]}
-                </motion.span>
-              </AnimatePresence>
-            </span>
-          </motion.h2>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: t + 0.25, duration: 0.8, ease }}
-            className="mt-6 max-w-xl text-sm leading-relaxed text-white/65 sm:text-base"
-          >
-            {profile.tagline}
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: t + 0.4, duration: 0.8, ease }}
-            className="mt-8 flex flex-wrap items-center gap-3"
-          >
-            <Magnetic>
-              <a href={profile.resume} download className="btn-gold">Download CV</a>
-            </Magnetic>
-            <Magnetic>
-              <a href="#projects" className="btn-outline">View Portfolio</a>
-            </Magnetic>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: t + 0.55, duration: 0.8 }}
-            className="mt-8 flex items-center gap-4 text-white/50"
-          >
-            {[
-              { href: profile.linkedin, label: "LinkedIn", Icon: FaLinkedinIn },
-              { href: profile.github, label: "GitHub", Icon: FaGithub },
-            ].map(({ href, label, Icon }) => (
-              <Magnetic key={label} strength={0.5}>
-                <a href={href} target="_blank" rel="noopener noreferrer" aria-label={label} className="flex h-10 w-10 items-center justify-center rounded-md border border-white/10 transition hover:border-brand hover:bg-gold/10 hover:text-gold">
-                  <Icon />
-                </a>
-              </Magnetic>
-            ))}
-            <span className="ml-2 flex items-center gap-1.5 text-xs">
-              <HiOutlineMapPin className="text-brand" /> {profile.location}
-            </span>
-          </motion.div>
-        </div>
-
-        <div data-hero-portrait className="relative order-1 mx-auto w-full max-w-[22rem] self-end sm:max-w-md lg:order-2 lg:max-w-[min(100%,calc((100svh-6rem)*0.8))] [perspective:1000px]">
-          {/* slow spinning gold ring */}
-          <motion.div
-            aria-hidden
-            initial={{ opacity: 0, scale: 0.7 }}
-            animate={{ opacity: 1, scale: 1, rotate: live ? 360 : 0 }}
-            transition={{
-              opacity: { delay: d + 0.2, duration: 1 },
-              scale: { delay: d + 0.2, duration: 1.2, ease },
-              rotate: live ? { duration: 40, repeat: Infinity, ease: "linear" } : { duration: 0 },
-            }}
-            className="absolute left-1/2 top-[8%] aspect-square w-[85%] -translate-x-1/2 rounded-full border border-dashed border-gold/30"
-          />
-          <motion.div
-            aria-hidden
-            animate={live ? { scale: [1, 1.08, 1], opacity: [0.35, 0.6, 0.35] } : { scale: 1, opacity: 0.45 }}
-            transition={live ? { duration: 5, repeat: Infinity, ease: "easeInOut" } : { duration: 0.3 }}
-            className="absolute left-1/2 top-[18%] aspect-square w-[62%] -translate-x-1/2 rounded-full glow [--glow:0.30]"
-          />
-
-          <motion.div
-            style={{ rotateY: rotY, rotateX: rotX, x: shiftX }}
-            initial={{ opacity: 0, y: 80, filter: "blur(12px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{ delay: d + 0.15, duration: 1.3, ease }}
-            className="relative aspect-[4/5] w-full [mask-image:linear-gradient(to_bottom,#000_65%,transparent)]"
-          >
-            <Image
-              src="/assets/profile-main.png"
-              alt={profile.name}
-              fill
-              priority
-              sizes="(min-width: 1024px) 45vw, 90vw"
-              className="object-contain object-bottom"
-            />
-          </motion.div>
-
-          {badges.map(({ Icon, label, className, color, float, dur }, i) => (
-            <motion.div
-              key={label}
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1, y: live ? [0, float, 0] : 0 }}
-              transition={{
-                opacity: { delay: d + 0.8 + i * 0.12, duration: 0.5 },
-                scale: { delay: d + 0.8 + i * 0.12, type: "spring", stiffness: 260, damping: 16 },
-                y: live ? { duration: dur, repeat: Infinity, ease: "easeInOut" } : { duration: 0.3 },
-              }}
-              className={`absolute z-10 flex items-center gap-1.5 rounded-lg border border-white/10 bg-panel px-2 py-1.5 text-[10px] font-medium text-white shadow-xl sm:gap-2 sm:rounded-xl sm:px-3 sm:py-2 sm:text-xs ${className}`}
-            >
-              <Icon style={{ color }} className="text-sm sm:text-base" /> {label}
-            </motion.div>
-          ))}
-        </div>
+      <div ref={wrapRef} data-hero-portrait className="absolute inset-0">
+        <canvas ref={canvasRef} aria-hidden className="block h-full w-full touch-pan-y" />
       </div>
 
-      <motion.a
-        href="#about"
-        aria-label="Scroll down"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: t + 0.9 }}
-        className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 text-[10px] uppercase tracking-[0.3em] text-white/40 lg:flex"
-      >
-        <span className="flex h-9 w-5 justify-center rounded-full border border-white/20 pt-1.5">
-          <motion.span
-            className="h-1.5 w-1 rounded-full bg-gold"
-            animate={live ? { y: [0, 12, 0], opacity: [1, 0.2, 1] } : { y: 0, opacity: 1 }}
-            transition={live ? { duration: 1.8, repeat: Infinity, ease: "easeInOut" } : { duration: 0 }}
-          />
-        </span>
-        Scroll
-      </motion.a>
+      <div data-hero-text className="pointer-events-none absolute inset-x-0 bottom-0 mx-auto max-w-7xl px-5 pb-8 sm:px-8 sm:pb-10">
+        <div className="grid items-end gap-8 lg:grid-cols-[1fr_1.15fr] lg:gap-14">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: d + 0.9, duration: 0.9, ease }}
+            className="pointer-events-auto"
+          >
+            <h1 className="max-w-md text-3xl font-extrabold leading-[1.05] text-white sm:text-[2.6rem]">
+              We build the next era of your business.
+            </h1>
+            <p className="mt-3 max-w-md text-[15px] leading-relaxed text-white/55 sm:text-base">
+              Websites, AI automation, GoHighLevel and marketing from one team, at fixed and transparent rates.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Magnetic><a href="#contact" className="btn-neon">Start a project</a></Magnetic>
+              <Magnetic><a href="#projects" className="btn-outline">See our work</a></Magnetic>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: d + 1.1, duration: 0.9, ease }}
+            className="pointer-events-auto"
+          >
+            <div role="tablist" aria-label="What we do" className="grid grid-cols-5 gap-2 sm:gap-3">
+              {SHAPES.map((s, i) => {
+                const on = i === active;
+                return (
+                  <button
+                    key={s.word}
+                    role="tab"
+                    aria-selected={on}
+                    onClick={() => pick(i)}
+                    className={`group text-left outline-none focus-visible:ring-2 focus-visible:ring-neon/60 rounded-sm ${on ? "text-white" : "text-white/40 hover:text-white/75"}`}
+                  >
+                    <span className="relative block h-[2px] overflow-hidden rounded-full bg-white/12">
+                      {on && (
+                        <motion.span
+                          key={`${i}-${cycleKey}`}
+                          className="absolute inset-y-0 left-0 w-full origin-left bg-neon"
+                          initial={{ scaleX: reduced ? 1 : 0 }}
+                          animate={{ scaleX: 1 }}
+                          transition={{ duration: reduced ? 0 : HOLD, ease: "linear" }}
+                        />
+                      )}
+                    </span>
+                    <span className="mt-2.5 block truncate text-[13px] font-semibold transition-colors sm:text-[15px]">{s.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+            <div className="mt-3 h-11 overflow-hidden sm:h-6">
+              <motion.p
+                key={active}
+                role="tabpanel"
+                initial={reduced ? false : { y: 14, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.5, ease }}
+                className="text-sm text-white/60"
+              >
+                {SHAPES[active].services}
+              </motion.p>
+            </div>
+            <p className="mt-1 hidden text-xs text-white/35 lg:block">Run your cursor through the bits, or click to scatter them.</p>
+          </motion.div>
+        </div>
+      </div>
     </section>
   );
 }

@@ -2,15 +2,15 @@
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useState } from "react";
-import { SIGNATURE_PATH, SIGNATURE_VIEWBOX } from "../brand/signature-path";
+import { LOGO_BULB, LOGO_PATH, LOGO_VIEWBOX } from "../brand/logo-path";
 
 export const INTRO_DELAY = 3.1; // seconds the page waits for the preloader to lift
 
 const ease = [0.76, 0, 0.24, 1] as const;
-const DRAW = 1.7; // signature stroke-draw time
+const DRAW = 1.7; // logo stroke-draw time
 const HOLD = 2.6; // when the curtains start to open
 
-/* Signature intro: "Faizan" is hand-drawn in a gold stroke, fills in, gets a shine sweep,
+/* Logo intro: the Bitzsol wordmark is drawn in a neon stroke, fills in, the bulb lights up, a shine sweeps across,
    then the screen splits open like curtains. */
 export default function Preloader() {
   const reduced = useReducedMotion();
@@ -47,38 +47,38 @@ export default function Preloader() {
           >
             <motion.div
               aria-hidden
-              className="absolute h-[28rem] w-[28rem] rounded-full bg-amber-500/15 blur-[110px]"
+              className="absolute h-[28rem] w-[28rem] rounded-full bg-violet/25 blur-[110px]"
               animate={{ scale: [0.8, 1.15, 0.95], opacity: [0.4, 0.9, 0.6] }}
               transition={{ duration: HOLD, ease: "easeInOut" }}
             />
 
-            <div className="relative w-[78vw] max-w-[34rem]">
-              <svg viewBox={SIGNATURE_VIEWBOX} className="w-full overflow-visible" role="img" aria-label="Faizan">
+            <div className="relative w-[64vw] max-w-[26rem]">
+              <svg viewBox={LOGO_VIEWBOX} className="w-full overflow-visible" role="img" aria-label="Bitzsol">
                 <defs>
-                  <linearGradient id="pre-gold" x1="0" y1="0" x2="1" y2="1">
+                  <linearGradient id="pre-neon" x1="0" y1="0" x2="1" y2="1">
                     <stop offset="0" style={{ stopColor: "var(--sig-a)" }} />
                     <stop offset="0.5" style={{ stopColor: "var(--sig-b)" }} />
                     <stop offset="1" style={{ stopColor: "var(--sig-c)" }} />
                   </linearGradient>
-                  {/* bright band that sweeps across the finished signature */}
+                  {/* bright band that sweeps across the finished logo */}
                   <linearGradient id="pre-shine" x1="0" y1="0" x2="1" y2="0" gradientUnits="objectBoundingBox">
                     <stop offset="0" stopColor="#fff" stopOpacity="0" />
                     <stop offset="0.5" stopColor="#fff" stopOpacity="0.85" />
                     <stop offset="1" stopColor="#fff" stopOpacity="0" />
                   </linearGradient>
-                  <clipPath id="pre-clip"><path d={SIGNATURE_PATH} /></clipPath>
+                  <clipPath id="pre-clip"><path d={LOGO_PATH} /></clipPath>
                   <filter id="pre-glow" x="-10%" y="-30%" width="120%" height="160%">
-                    <feGaussianBlur stdDeviation="10" result="b" />
+                    <feGaussianBlur stdDeviation="1.2" result="b" />
                     <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
                   </filter>
                 </defs>
 
                 {/* 1. the pen draws the outline */}
                 <motion.path
-                  d={SIGNATURE_PATH}
+                  d={LOGO_PATH}
                   fill="transparent"
-                  stroke="url(#pre-gold)"
-                  strokeWidth={6}
+                  stroke="url(#pre-neon)"
+                  strokeWidth={0.7}
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   filter="url(#pre-glow)"
@@ -88,21 +88,30 @@ export default function Preloader() {
                 />
                 {/* 2. ink floods in */}
                 <motion.path
-                  d={SIGNATURE_PATH}
-                  fill="url(#pre-gold)"
+                  d={LOGO_PATH}
+                  fill="var(--color-white)"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: DRAW - 0.35, duration: 0.6 }}
                 />
+                {/* the bulb switches on */}
+                <motion.path
+                  d={LOGO_BULB}
+                  fill="var(--color-neon)"
+                  filter="url(#pre-glow)"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: [0, 1, 0.3, 1] }}
+                  transition={{ delay: DRAW, duration: 0.5, times: [0, 0.3, 0.55, 1] }}
+                />
                 {/* 3. a shine passes over it */}
                 <g clipPath="url(#pre-clip)">
                   <motion.rect
-                    y="-800"
-                    height="1000"
-                    width="500"
+                    y="-10"
+                    height="80"
+                    width="40"
                     fill="url(#pre-shine)"
-                    initial={{ x: -600 }}
-                    animate={{ x: 2900 }}
+                    initial={{ x: -50 }}
+                    animate={{ x: 220 }}
                     transition={{ delay: DRAW + 0.15, duration: 0.8, ease: "easeInOut" }}
                   />
                 </g>
@@ -110,7 +119,7 @@ export default function Preloader() {
             </div>
 
             <div className="relative mt-6 flex overflow-hidden text-[10px] font-medium uppercase tracking-[0.5em] text-white/60 sm:text-xs">
-              {"Full Stack Developer".split("").map((ch, i) => (
+              {"Build the Next Era".split("").map((ch, i) => (
                 <motion.span
                   key={i}
                   className="inline-block whitespace-pre"
@@ -125,7 +134,7 @@ export default function Preloader() {
 
             <div className="absolute bottom-10 left-1/2 w-56 -translate-x-1/2 sm:bottom-12">
               <div className="h-px w-full overflow-hidden bg-white/10">
-                <div className="h-full bg-linear-to-r from-gold-deep via-[#ffe6b0] to-gold-deep" style={{ width: `${count}%` }} />
+                <div className="h-full bg-linear-to-r from-neon-deep via-white to-neon-deep" style={{ width: `${count}%` }} />
               </div>
               <div className="mt-3 flex justify-between font-mono text-[10px] tabular-nums text-white/35">
                 <span>LOADING</span>

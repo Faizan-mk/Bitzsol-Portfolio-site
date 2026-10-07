@@ -7,7 +7,7 @@ import { useRef } from "react";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
-const words = ["React", "Next.js", "Node.js", "React Native", "MongoDB", "Express", "Tailwind CSS", "Supabase", "Firebase", "MySQL"];
+const words = ["Web Development", "AI Automations", "GoHighLevel", "Digital Marketing", "Social Media", "SEO", "Graphic Design", "Video Editing", "E-Commerce", "Cloud"];
 
 /* Endless tech ticker that speeds up with scroll velocity and flips direction with scroll direction. */
 export default function Marquee() {
@@ -49,12 +49,12 @@ export default function Marquee() {
       <span key={i} className="flex shrink-0 items-center gap-8 pr-8">
         <span
           className={`text-4xl font-extrabold uppercase tracking-tight sm:text-6xl ${
-            outlined ? "text-transparent [-webkit-text-stroke:1px_rgba(240,178,82,0.55)]" : "text-white/90"
+            outlined ? "text-transparent [-webkit-text-stroke:1px_rgba(213,255,39,0.55)]" : "text-white/90"
           }`}
         >
           {w}
         </span>
-        <span className="text-2xl text-gold">✦</span>
+        <span className="text-2xl text-neon">✦</span>
       </span>
     ));
 

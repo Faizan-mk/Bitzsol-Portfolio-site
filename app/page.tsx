@@ -8,9 +8,7 @@ import Preloader from "@/components/motion/Preloader";
 import ScrollFX from "@/components/motion/ScrollFX";
 import SmoothScroll from "@/components/motion/SmoothScroll";
 import Statement from "@/components/motion/Statement";
-import {
-  About, Achievements, Certifications, Experience, Process, Projects, Skills, Stats, Testimonials,
-} from "@/components/Sections";
+import { About, Process, Projects, Purpose, Services, Solutions, Testimonials, Why } from "@/components/Sections";
 
 export default function Home() {
   return (
@@ -22,17 +20,16 @@ export default function Home() {
       <Navbar />
       <main>
         <Hero />
-        <Stats />
         <Statement />
         <About />
+        <Purpose />
         <Marquee />
-        <Experience />
-        <Skills />
+        <Solutions />
+        <Services />
+        <Why />
         <Process />
         <Projects />
-        <Certifications />
         <Testimonials />
-        <Achievements />
       </main>
       <Footer />
       <Effects />

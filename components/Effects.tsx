@@ -51,7 +51,7 @@ export default function Effects() {
     <>
       <motion.div
         aria-hidden
-        className="fixed inset-x-0 top-0 z-110 h-0.75 origin-left bg-linear-to-r from-gold-deep to-[#fff1d6]"
+        className="fixed inset-x-0 top-0 z-110 h-0.75 origin-left bg-linear-to-r from-violet to-neon"
         style={{ scaleX: progress }}
       />
       <AnimatePresence>
@@ -64,7 +64,7 @@ export default function Effects() {
             whileTap={{ scale: 0.9 }}
             onClick={scrollToTop}
             aria-label="Back to top"
-            className="fixed bottom-5 right-5 z-40 flex h-11 w-11 items-center justify-center rounded-full bg-gold text-on-gold shadow-lg shadow-gold/30"
+            className="fixed bottom-5 right-5 z-40 flex h-11 w-11 items-center justify-center rounded-full bg-neon text-on-neon shadow-lg shadow-neon/30"
           >
             <HiArrowUp size={18} />
           </motion.button>
