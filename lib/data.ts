@@ -99,6 +99,16 @@ export type Project = {
 
 export const projects: Project[] = [
   {
+    category: "Mobile App · Matchmaking",
+    slug: "matrimonial-app",
+
+    title: "Matrimonial App",
+    image: "/assets/proj-matrimonial.jpg",
+    description:
+      "A matchmaking app in English, Roman Urdu and Urdu, with real-time chat and calls, CNIC verification, a Wali (guardian) dashboard and a paid Explore Plus tier, built on Expo, React Native and Supabase.",
+    tags: ["Chat & calls", "Wali dashboard", "CNIC verified"],
+  },
+  {
     category: "E-Commerce · Shopify App",
     slug: "instagram-feeds-for-shopify",
 
