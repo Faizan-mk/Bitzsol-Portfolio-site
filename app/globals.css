@@ -227,3 +227,13 @@ html.light .outline-name { -webkit-text-stroke-color: rgba(70, 122, 0, 0.4); bac
 .orbit-rev { animation-duration: 28s; animation-direction: reverse; }
 .chip-float { animation: chipFloat 6s ease-in-out infinite; }
 html.light .chip-float > span { background: rgba(255, 255, 255, 0.8); }
+
+/* Service icon tiles: a conic light spins behind the tile so it reads as a light running round the border,
+   and the tile floats gently. Hovering the card speeds the light up. */
+.svc-ring {
+  background: conic-gradient(from 0deg, transparent 0 55%, var(--color-neon) 75%, var(--color-brand) 90%, transparent 100%);
+  animation: orbitSpin 4s linear infinite;
+}
+.svc-icon { animation: chipFloat 5s ease-in-out infinite; }
+.svc-icon::before { content: ""; position: absolute; inset: 0; border-radius: inherit; background: var(--color-line); }
+.group:hover .svc-ring { animation-duration: 1.4s; }
