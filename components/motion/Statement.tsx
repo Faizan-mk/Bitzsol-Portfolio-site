@@ -3,6 +3,7 @@
 import { motion, useInView, useReducedMotion } from "motion/react";
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
+import { INTRO_DELAY } from "./Preloader";
 
 // WebGL only exists in the browser, so the 3D studio is loaded client-side.
 const Studio = dynamic(() => import("../three/Studio"), { ssr: false });
@@ -24,6 +25,14 @@ export default function Statement() {
   const inView = useInView(ref, { margin: "10% 0px" });
   // the WebGL canvas only exists near the screen, so phones get its GPU memory back once you scroll past
   const near = useInView(ref, { margin: "300px 0px" });
+  // Desktops build the scene ahead of time, once the intro has settled, so it never compiles mid-scroll.
+  // Phones keep mounting it only near the screen to hold GPU memory down.
+  const [warm, setWarm] = useState(false);
+  useEffect(() => {
+    if (window.innerWidth < 768) return;
+    const t = setTimeout(() => setWarm(true), (INTRO_DELAY + 3.8) * 1000);
+    return () => clearTimeout(t);
+  }, []);
   const [active, setActive] = useState(0);
   const [cycle, setCycle] = useState(0); // restarts the timer after a manual pick
   const pointer = useRef({ x: 0, y: 0 });
@@ -53,7 +62,7 @@ export default function Statement() {
         transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
         className="relative -mx-5 h-[440px] sm:mx-0 sm:h-[560px] lg:h-[640px]"
       >
-        {near && <Studio active={active} running={inView && !reduced} pointer={pointer} />}
+        {(near || warm) && <Studio active={active} running={inView && !reduced} pointer={pointer} />}
       </motion.div>
 
       <div role="tablist" aria-label="Services" className="relative mx-auto mt-2 grid max-w-3xl grid-cols-4 gap-2 sm:gap-4">

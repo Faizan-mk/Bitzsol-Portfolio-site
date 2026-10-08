@@ -1,13 +1,14 @@
 "use client";
 
 import { motion } from "motion/react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { FaLinkedinIn } from "react-icons/fa6";
 import { HiArrowUpRight, HiOutlineChatBubbleLeftRight, HiOutlineEnvelope, HiOutlineGlobeAlt, HiOutlinePhone } from "react-icons/hi2";
 import { company, navLinks } from "@/lib/data";
-import Logo from "./brand/Logo";
-import Magnetic from "./motion/Magnetic";
-import { scrollToTop } from "./motion/SmoothScroll";
+import Logo from "@/components/brand/Logo";
+import Magnetic from "@/components/motion/Magnetic";
+import { scrollToTop } from "@/components/motion/SmoothScroll";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -116,10 +117,10 @@ export default function Footer() {
             <ul className="space-y-3">
               {navLinks.map((l) => (
                 <li key={l.href}>
-                  <a href={l.href} className="group inline-flex items-center gap-2 text-sm text-white/60 transition hover:text-white">
+                  <Link href={l.href} className="group inline-flex items-center gap-2 text-sm text-white/60 transition hover:text-white">
                     <span className="h-px w-0 bg-neon transition-all duration-300 group-hover:w-4" />
                     {l.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>

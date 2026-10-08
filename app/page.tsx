@@ -1,40 +1,23 @@
-import Effects from "@/components/Effects";
-import Footer from "@/components/Footer";
-import Hero from "@/components/Hero";
-import Navbar from "@/components/Navbar";
-import Cursor from "@/components/motion/Cursor";
 import Marquee from "@/components/motion/Marquee";
-import Preloader from "@/components/motion/Preloader";
-import ScrollFX from "@/components/motion/ScrollFX";
-import SmoothScroll from "@/components/motion/SmoothScroll";
 import Statement from "@/components/motion/Statement";
-import { About, Process, Projects, Purpose, Services, Solutions, Testimonials, Why } from "@/components/Sections";
+import About from "@/components/sections/About";
+import Hero from "@/components/sections/Hero";
+import Projects from "@/components/sections/Projects";
+import Services from "@/components/sections/Services";
+import Testimonials from "@/components/sections/Testimonials";
+import Why from "@/components/sections/Why";
 
 export default function Home() {
   return (
     <>
-      <div aria-hidden className="aurora" />
-      <SmoothScroll />
-      <Preloader />
-      <Cursor />
-      <Navbar />
-      <main>
-        <Hero />
-        <Statement />
-        <About />
-        <Purpose />
-        <Marquee />
-        <Solutions />
-        <Services />
-        <Why />
-        <Process />
-        <Projects />
-        <Testimonials />
-      </main>
-      <Footer />
-      <Effects />
-      <ScrollFX />
-      <div aria-hidden className="grain" />
+      <Hero />
+      <Statement />
+      <About />
+      <Marquee />
+      <Services />
+      <Why />
+      <Projects limit={6} />
+      <Testimonials />
     </>
   );
 }

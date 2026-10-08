@@ -4,6 +4,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
 import "lenis/dist/lenis.css";
+import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { INTRO_DELAY } from "./Preloader";
 
@@ -37,6 +38,12 @@ export default function SmoothScroll() {
       delete window.__lenis;
     };
   }, []);
+
+  // New route starts at the top; jump Lenis there too so it doesn't animate back to the old position.
+  const pathname = usePathname();
+  useEffect(() => {
+    window.__lenis?.scrollTo(0, { immediate: true, force: true });
+  }, [pathname]);
 
   return null;
 }

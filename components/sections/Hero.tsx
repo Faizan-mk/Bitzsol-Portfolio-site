@@ -1,9 +1,10 @@
 "use client";
 
 import { motion, useReducedMotion } from "motion/react";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import Magnetic from "./motion/Magnetic";
-import { INTRO_DELAY } from "./motion/Preloader";
+import Magnetic from "@/components/motion/Magnetic";
+import { INTRO_DELAY } from "@/components/motion/Preloader";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 const HOLD = 4.2; // seconds each shape holds before the bits move on
@@ -74,9 +75,11 @@ function sample(word: string, w: number, h: number, mobile: boolean, maxN: numbe
   }
 
   const data = g.getImageData(0, 0, w, h).data;
-  let gap = 3;
+  // start the grid near the right spacing (from the filled area), then widen until the shape fits the particle budget
+  let area = 0;
+  for (let i = 3; i < data.length; i += 4) if (data[i] > 140) area++;
+  let gap = Math.max(3, Math.floor(Math.sqrt(area / maxN)));
   let pts: number[] = [];
-  // widen the grid until the shape fits the particle budget
   for (;;) {
     pts = [];
     for (let y = 0; y < h; y += gap) for (let x = 0; x < w; x += gap) if (data[(y * w + x) * 4 + 3] > 140) pts.push(x, y);
@@ -98,6 +101,11 @@ function sample(word: string, w: number, h: number, mobile: boolean, maxN: numbe
   return { xy: Float32Array.from(pts), accent, count: n, gap };
 }
 
+// Run work when the main thread is idle, so sampling never lands on an animation frame.
+const whenIdle = (fn: () => void) =>
+  typeof window.requestIdleCallback === "function" ? window.requestIdleCallback(fn, { timeout: 800 }) : setTimeout(fn, 60) as unknown as number;
+const cancelIdle = (id: number) => (typeof window.cancelIdleCallback === "function" ? window.cancelIdleCallback(id) : clearTimeout(id));
+
 export default function Hero() {
   const reduced = useReducedMotion();
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -114,13 +122,17 @@ export default function Hero() {
     const ctx = canvas.getContext("2d")!;
     const still = !!reduced;
 
-    let W = 0, H = 0, dpr = 1, mobile = false, size = 2;
-    let targets: Target[] = [];
-    let N = 0;
+    let W = 0, H = 0, dpr = 1, mobile = false, size = 2, maxN = 0, extra = 0;
+    let targets: (Target | undefined)[] = [];
+    let N = 0, live = 0; // N bits are allocated; only the first `live` are simulated and drawn
     let px = new Float32Array(0), py = new Float32Array(0), vx = new Float32Array(0), vy = new Float32Array(0);
     let tx = new Float32Array(0), ty = new Float32Array(0), hx = new Float32Array(0), hy = new Float32Array(0);
     let tone = new Uint8Array(0), base = new Uint8Array(0), free = new Uint8Array(0), phase = new Float32Array(0);
+    // per-frame draw buckets (colour x loose), so each bit is visited a fixed number of times per frame
+    let bucket = new Uint8Array(0), order = new Uint32Array(0);
+    const counts = new Uint32Array(8), offs = new Uint32Array(8);
     let current = 0;
+    let idleId = 0;
     const mouse = { x: -9999, y: -9999 };
     let colors = ["#fff", "#d5ff27", "#7f3aed", "#9f7aea"];
     const readColors = () => {
@@ -129,9 +141,27 @@ export default function Hero() {
       colors = [v("--color-white", "#fff"), v("--color-neon", "#d5ff27"), v("--color-brand", "#7f3aed"), v("--color-brand-soft", "#9f7aea")];
     };
 
+    // bits nearly touch so the letterforms read solid, with a hairline of space between them
+    const refit = () => {
+      const ready = targets.filter((t): t is Target => !!t);
+      size = Math.max(...ready.map((t) => t.gap)) * 0.78;
+      live = Math.min(N, Math.max(live, ...ready.map((t) => t.count + extra)));
+    };
+    const shape = (i: number) => {
+      if (!targets[i]) { targets[i] = sample(SHAPES[i].word, W, H, mobile, maxN); refit(); }
+      return targets[i]!;
+    };
+    // sample the shapes not on screen yet, one per idle slot
+    const sampleRest = () => {
+      const i = SHAPES.findIndex((_, k) => !targets[k]);
+      if (i === -1) return;
+      shape(i);
+      idleId = whenIdle(sampleRest);
+    };
+
     const assign = (idx: number, burst: boolean) => {
       current = idx;
-      const t = targets[idx];
+      const t = shape(idx);
       const bulb = SHAPES[idx].word === "bulb";
       for (let i = 0; i < N; i++) {
         if (i < t.count) {
@@ -151,22 +181,24 @@ export default function Hero() {
 
     const build = () => {
       const r = wrap.getBoundingClientRect();
-      W = Math.round(r.width); H = Math.round(r.height);
-      if (!W || !H) return;
+      const w = Math.round(r.width), h = Math.round(r.height);
+      if (!w || !h || (w === W && h === H)) return false;
+      W = w; H = h;
       mobile = W < 640;
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      // the bits are flat squares, so 1.5x is as crisp as 2x at a fraction of the fill cost
+      dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       canvas.width = W * dpr; canvas.height = H * dpr;
       canvas.style.width = `${W}px`; canvas.style.height = `${H}px`;
-      const maxN = mobile ? 2600 : 6500;
-      targets = SHAPES.map((s) => sample(s.word, W, H, mobile, maxN));
-      // bits nearly touch so the letterforms read solid, with a hairline of space between them
-      size = Math.max(...targets.map((t) => t.gap)) * 0.78;
-      const nextN = Math.max(...targets.map((t) => t.count)) + (mobile ? 120 : 260);
-      if (nextN !== N) {
-        N = nextN;
+      maxN = mobile ? 1800 : 5000;
+      extra = mobile ? 120 : 260;
+      cancelIdle(idleId);
+      targets = new Array(SHAPES.length);
+      if (maxN + extra !== N) {
+        N = maxN + extra;
         px = new Float32Array(N); py = new Float32Array(N); vx = new Float32Array(N); vy = new Float32Array(N);
         tx = new Float32Array(N); ty = new Float32Array(N); hx = new Float32Array(N); hy = new Float32Array(N);
         tone = new Uint8Array(N); base = new Uint8Array(N); free = new Uint8Array(N); phase = new Float32Array(N);
+        bucket = new Uint8Array(N); order = new Uint32Array(N);
         for (let i = 0; i < N; i++) {
           px[i] = Math.random() * W; py[i] = Math.random() * H;
           const roll = Math.random();
@@ -174,8 +206,11 @@ export default function Hero() {
           phase[i] = Math.random() * Math.PI * 2;
         }
       }
-      assign(current, false);
+      live = 0;
+      assign(current, false); // samples only the shape on screen; the rest follow in idle time
       if (still) for (let i = 0; i < N; i++) { px[i] = free[i] ? hx[i] : tx[i]; py[i] = free[i] ? hy[i] : ty[i]; }
+      idleId = whenIdle(sampleRest);
+      return true;
     };
 
     const startAt = performance.now() + d * 1000;
@@ -185,11 +220,14 @@ export default function Hero() {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, W, H);
       if (!fade) return;
-      const R = mobile ? 70 : 120, R2 = R * R;
+      const R = mobile ? 70 : 120, R2 = R * R, lit2 = R2 * 1.6;
       const pull = now < startAt ? 0 : 0.055;
 
-      if (!still) {
-        for (let i = 0; i < N; i++) {
+      // one pass: move each bit, then file it under its colour (bits near the pointer catch the neon)
+      counts.fill(0);
+      for (let i = 0; i < live; i++) {
+        let dx = px[i] - mouse.x, dy = py[i] - mouse.y;
+        if (!still) {
           let gx: number, gy: number, k: number;
           if (free[i]) {
             gx = hx[i] + Math.sin(time * 0.35 + phase[i]) * 40;
@@ -202,29 +240,33 @@ export default function Hero() {
           }
           vx[i] = (vx[i] + (gx - px[i]) * k) * 0.84;
           vy[i] = (vy[i] + (gy - py[i]) * k) * 0.84;
-          const dx = px[i] - mouse.x, dy = py[i] - mouse.y, d2 = dx * dx + dy * dy;
+          const d2 = dx * dx + dy * dy;
           if (d2 < R2 && d2 > 0.01) {
             const dist = Math.sqrt(d2), f = (1 - dist / R) * 5;
             vx[i] += (dx / dist) * f; vy[i] += (dy / dist) * f;
           }
           px[i] += vx[i]; py[i] += vy[i];
+          dx += vx[i]; dy += vy[i];
         }
+        const b = ((dx * dx + dy * dy < lit2 ? 1 : tone[i]) << 1) | free[i];
+        bucket[i] = b; counts[b]++;
       }
+      let o = 0;
+      for (let b = 0; b < 8; b++) { offs[b] = o; o += counts[b]; }
+      for (let i = 0; i < live; i++) order[offs[bucket[i]]++] = i;
 
-      // one pass per colour keeps fillStyle switches to a handful per frame
-      for (let c = 0; c < 4; c++) {
-        ctx.fillStyle = colors[c];
-        for (const loose of [0, 1]) {
+      // one fillStyle switch per bucket keeps state changes to a handful per frame
+      let from = 0;
+      for (let b = 0; b < 8; b++) {
+        const to = from + counts[b];
+        if (to > from) {
+          const loose = b & 1;
+          ctx.fillStyle = colors[b >> 1];
           ctx.globalAlpha = fade * (loose ? 0.28 : 1);
-          const s = loose ? size * 0.6 : size;
-          for (let i = 0; i < N; i++) {
-            if (free[i] !== loose) continue;
-            const dx = px[i] - mouse.x, dy = py[i] - mouse.y;
-            const lit = dx * dx + dy * dy < R2 * 1.6; // bits near the pointer catch the neon
-            if ((lit ? 1 : tone[i]) !== c) continue;
-            ctx.fillRect(px[i] - s / 2, py[i] - s / 2, s, s);
-          }
+          const s = loose ? size * 0.6 : size, hs = s / 2;
+          for (let k = from; k < to; k++) { const i = order[k]; ctx.fillRect(px[i] - hs, py[i] - hs, s, s); }
         }
+        from = to;
       }
       ctx.globalAlpha = 1;
     };
@@ -235,7 +277,7 @@ export default function Hero() {
     const pause = () => { running = false; cancelAnimationFrame(raf); };
 
     morphRef.current = (i: number) => {
-      if (!targets.length) return;
+      if (!N) return;
       assign(i, !still);
       if (still) { for (let j = 0; j < N; j++) { px[j] = free[j] ? hx[j] : tx[j]; py[j] = free[j] ? hy[j] : ty[j]; } draw(performance.now()); }
     };
@@ -250,15 +292,20 @@ export default function Hero() {
       if (still) return;
       const r = canvas.getBoundingClientRect();
       const cx = e.clientX - r.left, cy = e.clientY - r.top;
-      for (let i = 0; i < N; i++) {
+      for (let i = 0; i < live; i++) {
         const dx = px[i] - cx, dy = py[i] - cy, dist = Math.sqrt(dx * dx + dy * dy) || 1;
         if (dist < 320) { const f = (1 - dist / 320) * 38; vx[i] += (dx / dist) * f; vy[i] += (dy / dist) * f; }
       }
     };
 
-    let ready = false;
+    let ready = false, resizeT = 0;
     const io = new IntersectionObserver(([e]) => { if (ready) { if (e.isIntersecting) play(); else pause(); } });
-    const ro = new ResizeObserver(() => { if (ready) { build(); if (still) draw(performance.now()); } });
+    // resizes are debounced: re-sampling mid-drag would stall every frame of the drag
+    const ro = new ResizeObserver(() => {
+      if (!ready) return;
+      clearTimeout(resizeT);
+      resizeT = window.setTimeout(() => { if (build() && still) draw(performance.now()); }, 150);
+    });
     const mo = new MutationObserver(() => { readColors(); if (still) draw(performance.now()); });
 
     document.fonts.ready.then(() => {
@@ -275,6 +322,7 @@ export default function Hero() {
 
     return () => {
       pause(); io.disconnect(); ro.disconnect(); mo.disconnect();
+      clearTimeout(resizeT); cancelIdle(idleId);
       canvas.removeEventListener("pointermove", onMove);
       canvas.removeEventListener("pointerleave", onLeave);
       canvas.removeEventListener("pointerdown", onDown);
@@ -320,8 +368,8 @@ export default function Hero() {
               Websites, AI automation, GoHighLevel and marketing from one team, at fixed and transparent rates.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <Magnetic><a href="#contact" className="btn-neon">Start a project</a></Magnetic>
-              <Magnetic><a href="#projects" className="btn-outline">See our work</a></Magnetic>
+              <Magnetic><Link href="/contact" className="btn-neon">Start a project</Link></Magnetic>
+              <Magnetic><Link href="/projects" className="btn-outline">See our work</Link></Magnetic>
             </div>
           </motion.div>
 

@@ -4,11 +4,14 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrambleTextPlugin } from "gsap/ScrambleTextPlugin";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { usePathname } from "next/navigation";
 
 gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin, useGSAP);
 
-/* Every scroll-driven animation on the page, wired up by data attributes in the markup. */
+/* Every scroll-driven animation on the page, wired up by data attributes in the markup.
+   Lives in the root layout, so it re-runs (and reverts the previous page's triggers) on every route change. */
 export default function ScrollFX() {
+  const pathname = usePathname();
   useGSAP(() => {
     const mm = gsap.matchMedia();
 
@@ -52,15 +55,17 @@ export default function ScrollFX() {
         });
       });
 
-      // Hero sinks and fades as you leave it.
-      gsap.to("[data-hero-portrait]", {
-        yPercent: 18, opacity: 0.2, ease: "none",
-        scrollTrigger: { trigger: "#home", start: "top top", end: "bottom top", scrub: true },
-      });
-      gsap.to("[data-hero-text]", {
-        yPercent: -12, opacity: 0, ease: "none",
-        scrollTrigger: { trigger: "#home", start: "30% top", end: "bottom top", scrub: true },
-      });
+      // Hero sinks and fades as you leave it (home page only).
+      if (document.querySelector("#home")) {
+        gsap.to("[data-hero-portrait]", {
+          yPercent: 18, opacity: 0.2, ease: "none",
+          scrollTrigger: { trigger: "#home", start: "top top", end: "bottom top", scrub: true },
+        });
+        gsap.to("[data-hero-text]", {
+          yPercent: -12, opacity: 0, ease: "none",
+          scrollTrigger: { trigger: "#home", start: "30% top", end: "bottom top", scrub: true },
+        });
+      }
 
       // Timeline rail draws itself, dots pop in as each job arrives.
       gsap.utils.toArray<HTMLElement>("[data-line]").forEach((line) => {
@@ -103,11 +108,15 @@ export default function ScrollFX() {
       });
     });
 
-    // Fonts and images shift layout after load; re-measure trigger positions.
+    // Fonts and images shift layout after load (or after a client-side navigation); re-measure trigger positions.
     const refresh = () => ScrollTrigger.refresh();
     window.addEventListener("load", refresh);
-    return () => window.removeEventListener("load", refresh);
-  });
+    const settle = setTimeout(refresh, 300);
+    return () => {
+      clearTimeout(settle);
+      window.removeEventListener("load", refresh);
+    };
+  }, { dependencies: [pathname], revertOnUpdate: true });
 
   return null;
 }

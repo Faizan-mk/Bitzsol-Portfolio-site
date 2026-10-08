@@ -1,21 +1,24 @@
 "use client";
 
 import { AnimatePresence, motion, useMotionValueEvent, useReducedMotion, useScroll } from "motion/react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { HiOutlineGlobeAlt, HiOutlinePaperAirplane } from "react-icons/hi2";
 import { company, navLinks } from "@/lib/data";
-import Logo from "./brand/Logo";
-import ThemeToggle from "./ThemeToggle";
-import Magnetic from "./motion/Magnetic";
-import { INTRO_DELAY } from "./motion/Preloader";
+import Logo from "@/components/brand/Logo";
+import ThemeToggle from "@/components/ui/ThemeToggle";
+import Magnetic from "@/components/motion/Magnetic";
+import { INTRO_DELAY } from "@/components/motion/Preloader";
 
 const ease = [0.16, 1, 0.3, 1] as const;
+const MotionLink = motion.create(Link);
 
 export default function Navbar() {
   const reduced = useReducedMotion();
   const { scrollY } = useScroll();
   const [scrolled, setScrolled] = useState(false);
-  const [active, setActive] = useState("#home");
+  const pathname = usePathname();
   const [hovered, setHovered] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   // the entrance waits for the preloader only once
@@ -30,18 +33,8 @@ export default function Navbar() {
     setScrolled(y > 40);
   });
 
-  // Active link: an observer watches a thin band near the top of the viewport, so nothing is measured per scroll frame.
-  useEffect(() => {
-    const els = navLinks.map((l) => document.querySelector<HTMLElement>(l.href)).filter(Boolean) as HTMLElement[];
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => { if (e.isIntersecting) setActive(`#${e.target.id}`); });
-      },
-      { rootMargin: "-140px 0px -70% 0px" }
-    );
-    els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
-  }, []);
+  // Active link follows the route; nested routes like /projects/[slug] keep their parent highlighted.
+  const active = navLinks.find((l) => (l.href === "/" ? pathname === "/" : pathname.startsWith(l.href)))?.href ?? null;
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -60,7 +53,7 @@ export default function Navbar() {
         <nav
           className={`relative mx-auto flex items-center justify-between transition-[background-color,box-shadow,border-color,margin,height,max-width] duration-500 ${
             scrolled
-              ? "mt-3 h-16 max-w-6xl rounded-full border border-white/10 bg-black/55 px-4 backdrop-blur-xl backdrop-saturate-150 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.9),0_0_32px_-4px_rgba(127,58,237,0.35)] sm:px-5"
+              ? "mt-3 h-16 max-w-6xl rounded-full border border-white/10 bg-black/55 px-4 backdrop-blur-md shadow-[0_20px_50px_-20px_rgba(0,0,0,0.9),0_0_32px_-4px_rgba(127,58,237,0.35)] sm:px-5"
               : "mt-0 h-20 max-w-7xl border border-transparent px-2 sm:px-3"
           }`}
         >
@@ -72,11 +65,11 @@ export default function Navbar() {
             }`}
           />
 
-          <a href="#home" className="group relative flex items-center" aria-label={`${company.name}, home`}>
+          <Link href="/" className="group relative flex items-center" aria-label={`${company.name}, home`}>
             <Logo className="h-7 w-auto text-white transition-transform duration-500 group-hover:scale-105 sm:h-8" />
             {/* underline flourish that draws in on hover */}
             <span className="absolute -bottom-1 left-2 h-px w-0 bg-linear-to-r from-neon to-transparent transition-all duration-500 group-hover:w-[85%]" />
-          </a>
+          </Link>
 
           {/* desktop links: a neon pill slides to whatever you hover, then back to the active section */}
           <div
@@ -84,7 +77,7 @@ export default function Navbar() {
             onMouseLeave={() => setHovered(null)}
           >
             {navLinks.map((l) => (
-              <a
+              <Link
                 key={l.href}
                 href={l.href}
                 onMouseEnter={() => setHovered(l.href)}
@@ -100,7 +93,7 @@ export default function Navbar() {
                   />
                 )}
                 <span className="relative z-10">{l.label}</span>
-              </a>
+              </Link>
             ))}
           </div>
 
@@ -118,9 +111,9 @@ export default function Navbar() {
             </a>
             <div className="hidden sm:block">
               <Magnetic strength={0.3}>
-                <a href="#contact" className="btn-neon !py-2.5 !text-xs">
+                <Link href="/contact" className="btn-neon !py-2.5 !text-xs">
                   <HiOutlinePaperAirplane className="-rotate-45" /> Contact Me
-                </a>
+                </Link>
               </Magnetic>
             </div>
             <button
@@ -151,7 +144,7 @@ export default function Navbar() {
             <nav className="flex flex-col gap-1">
               {navLinks.map((l, i) => (
                 <div key={l.href} className="overflow-hidden">
-                  <motion.a
+                  <MotionLink
                     href={l.href}
                     onClick={() => setOpen(false)}
                     initial={{ y: "100%" }}
@@ -162,7 +155,7 @@ export default function Navbar() {
                   >
                     <span className="font-mono text-xs text-white/30">0{i + 1}</span>
                     {l.label}
-                  </motion.a>
+                  </MotionLink>
                 </div>
               ))}
             </nav>

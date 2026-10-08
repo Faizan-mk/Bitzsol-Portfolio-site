@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { LOGO_BULB, LOGO_PATH, LOGO_VIEWBOX } from "../brand/logo-path";
 
 export const INTRO_DELAY = 3.1; // seconds the page waits for the preloader to lift
@@ -15,7 +15,9 @@ const HOLD = 2.6; // when the curtains start to open
 export default function Preloader() {
   const reduced = useReducedMotion();
   const [done, setDone] = useState(false);
-  const [count, setCount] = useState(0);
+  // the counter writes straight to the DOM: a React render per frame would compete with the intro animation
+  const barRef = useRef<HTMLDivElement>(null);
+  const numRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     if (reduced) { setDone(true); return; }
@@ -24,7 +26,8 @@ export default function Preloader() {
     let raf = 0;
     const tick = (t: number) => {
       const p = Math.min(1, (t - start) / (HOLD * 1000 - 200));
-      setCount(Math.round(p * 100));
+      if (barRef.current) barRef.current.style.transform = `scaleX(${p})`;
+      if (numRef.current) numRef.current.textContent = String(Math.round(p * 100)).padStart(3, "0");
       if (p < 1) raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
@@ -134,11 +137,11 @@ export default function Preloader() {
 
             <div className="absolute bottom-10 left-1/2 w-56 -translate-x-1/2 sm:bottom-12">
               <div className="h-px w-full overflow-hidden bg-white/10">
-                <div className="h-full bg-linear-to-r from-neon-deep via-white to-neon-deep" style={{ width: `${count}%` }} />
+                <div ref={barRef} className="h-full w-full origin-left scale-x-0 bg-linear-to-r from-neon-deep via-white to-neon-deep" />
               </div>
               <div className="mt-3 flex justify-between font-mono text-[10px] tabular-nums text-white/35">
                 <span>LOADING</span>
-                <span>{String(count).padStart(3, "0")}</span>
+                <span ref={numRef}>000</span>
               </div>
             </div>
           </motion.div>

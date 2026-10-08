@@ -2,7 +2,7 @@
 
 import { ContactShadows, Line, RoundedBox } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { useRef, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import * as THREE from "three";
 
 /* The Bitzsol studio in 3D: a floating round platform with the glowing bulb in the middle and four characters
@@ -304,12 +304,24 @@ function Bulb() {
   );
 }
 
+/* Compiles every shader and draws one frame as soon as the scene mounts, so the first visible frame
+   (usually mid-scroll) doesn't stall on shader compilation. */
+function Warmup() {
+  const { gl, scene, camera, advance } = useThree();
+  useEffect(() => {
+    gl.compile(scene, camera);
+    advance(performance.now());
+  }, [gl, scene, camera, advance]);
+  return null;
+}
+
 const STATIONS = [Designer, Developer, Robot, Marketer];
 
 function Stage({ active, pointer }: { active: number; pointer: { current: { x: number; y: number } } }) {
   const turn = useRef<THREE.Group>(null!);
   const { camera, size } = useThree();
   const target = -active * (Math.PI / 2);
+  const camGoal = useRef(new THREE.Vector3()).current;
   useFrame((_, dt) => {
     // ease the platform to the active station (along the shortest way round), plus a little pointer lean
     const goal = target + pointer.current.x * 0.35;
@@ -317,7 +329,7 @@ function Stage({ active, pointer }: { active: number; pointer: { current: { x: n
     diff = Math.atan2(Math.sin(diff), Math.cos(diff));
     turn.current.rotation.y += diff * Math.min(1, dt * 3);
     const far = size.width < 640 ? 11 : 9;
-    camera.position.lerp(new THREE.Vector3(pointer.current.x * 0.8, 3.1 - pointer.current.y * 0.6, far), Math.min(1, dt * 2));
+    camera.position.lerp(camGoal.set(pointer.current.x * 0.8, 3.1 - pointer.current.y * 0.6, far), Math.min(1, dt * 2));
     camera.lookAt(0, 1.45, 0);
   });
 
@@ -350,7 +362,7 @@ export default function Studio({ active, running, pointer }: { active: number; r
   return (
     <Canvas
       frameloop={running ? "always" : "never"}
-      dpr={compact ? [1, 1.25] : [1, 1.75]}
+      dpr={compact ? [1, 1.25] : [1, 1.5]}
       camera={{ position: [0, 3.1, 9], fov: 34 }}
       gl={{ antialias: !compact, alpha: true, powerPreference: compact ? "low-power" : "default" }}
       onCreated={({ gl }) => { gl.toneMapping = THREE.ACESFilmicToneMapping; }}
@@ -361,6 +373,7 @@ export default function Studio({ active, running, pointer }: { active: number; r
       <pointLight position={[-4, 2, 3]} color={VIOLET} intensity={18} distance={12} />
       <pointLight position={[4, 1.5, 3]} color={NEON} intensity={6} distance={10} />
       <Stage active={active} pointer={pointer} />
+      <Warmup />
     </Canvas>
   );
 }

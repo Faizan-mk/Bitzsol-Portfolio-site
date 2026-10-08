@@ -1,27 +1,40 @@
 "use client";
 
 import { AnimatePresence, motion, useMotionValueEvent, useScroll, useSpring } from "motion/react";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { HiArrowUp } from "react-icons/hi2";
-import { scrollToTop } from "./motion/SmoothScroll";
+import { scrollToTop } from "./SmoothScroll";
 
 /* Page-wide chrome: spring scroll-progress bar, project-card tilt, back-to-top. */
 export default function Effects() {
+  const pathname = usePathname();
   const { scrollY, scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 24, restDelta: 0.001 });
   const [showTop, setShowTop] = useState(false);
   useMotionValueEvent(scrollY, "change", (v) => setShowTop(v > 500));
 
   useEffect(() => {
-    const spot = (e: PointerEvent) => {
+    // at most one layout read per frame, however fast the pointer events arrive
+    let raf = 0, last: PointerEvent | null = null;
+    const apply = () => {
+      raf = 0;
+      const e = last!;
       const card = (e.target as Element).closest?.(".spotlight") as HTMLElement | null;
       if (!card) return;
       const r = card.getBoundingClientRect();
       card.style.setProperty("--mx", `${e.clientX - r.left}px`);
       card.style.setProperty("--my", `${e.clientY - r.top}px`);
     };
+    const spot = (e: PointerEvent) => {
+      last = e;
+      if (!raf) raf = requestAnimationFrame(apply);
+    };
     window.addEventListener("pointermove", spot, { passive: true });
-    return () => window.removeEventListener("pointermove", spot);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("pointermove", spot);
+    };
   }, []);
 
   useEffect(() => {
@@ -45,7 +58,7 @@ export default function Effects() {
       });
     });
     return () => cleanups.forEach((fn) => fn());
-  }, []);
+  }, [pathname]);
 
   return (
     <>

@@ -24,12 +24,11 @@ export const company = {
 };
 
 export const navLinks = [
-  { href: "#home", label: "Home" },
-  { href: "#about", label: "About" },
-  { href: "#services", label: "Services" },
-  { href: "#why", label: "Why Us" },
-  { href: "#projects", label: "Work" },
-  { href: "#contact", label: "Contact" },
+  { href: "/", label: "Home" },
+  { href: "/about", label: "About" },
+  { href: "/services", label: "Services" },
+  { href: "/projects", label: "Work" },
+  { href: "/contact", label: "Contact" },
 ];
 
 export const snapshot = [
@@ -98,6 +97,7 @@ export const process = [
 ];
 
 export type Project = {
+  slug: string;
   category: string;
   title: string;
   image: string;
@@ -108,6 +108,8 @@ export type Project = {
 export const projects: Project[] = [
   {
     category: "E-Commerce · Shopify App",
+    slug: "instagram-feeds-for-shopify",
+
     title: "Instagram Feeds for Shopify",
     image: "/assets/proj-ecommerce.jpg",
     description:
@@ -116,6 +118,8 @@ export const projects: Project[] = [
   },
   {
     category: "Aviation",
+    slug: "amelia-os",
+
     title: "Amelia OS",
     image: "/assets/proj-hostel.jpg",
     description:
@@ -124,6 +128,8 @@ export const projects: Project[] = [
   },
   {
     category: "Travel & Planning",
+    slug: "lastbadtrip",
+
     title: "LastBadTrip",
     image: "/assets/proj-travel.jpg",
     description:
@@ -132,6 +138,8 @@ export const projects: Project[] = [
   },
   {
     category: "Healthcare",
+    slug: "secret-align",
+
     title: "Secret Align",
     image: "/assets/proj-password.jpg",
     description:
@@ -140,6 +148,8 @@ export const projects: Project[] = [
   },
   {
     category: "Finance",
+    slug: "consultation-amaltitek",
+
     title: "Consultation Amaltitek",
     image: "/assets/proj-crypto.jpg",
     description:
@@ -148,6 +158,8 @@ export const projects: Project[] = [
   },
   {
     category: "Campaigns",
+    slug: "official-truck-br",
+
     title: "Official Truck BR",
     image: "/assets/proj-twitter.jpg",
     description:
@@ -156,6 +168,8 @@ export const projects: Project[] = [
   },
   {
     category: "E-Commerce",
+    slug: "barnard-pt-moveis-online",
+
     title: "Barnard PT: Móveis Online",
     image: "/assets/proj-coffee-shop.jpg",
     description:
@@ -164,6 +178,8 @@ export const projects: Project[] = [
   },
   {
     category: "Marketing & Design",
+    slug: "netbezig",
+
     title: "NetBezig",
     image: "/assets/proj-cblt.jpg",
     description:
@@ -172,6 +188,8 @@ export const projects: Project[] = [
   },
   {
     category: "Education · Game",
+    slug: "abcedlalecture",
+
     title: "Abcedlalecture",
     image: "/assets/proj-rishta.jpg",
     description:
@@ -180,6 +198,8 @@ export const projects: Project[] = [
   },
   {
     category: "Billing & Fintech",
+    slug: "adly",
+
     title: "Adly",
     image: "/assets/proj-auth.jpg",
     description:
@@ -188,6 +208,8 @@ export const projects: Project[] = [
   },
   {
     category: "Customizer",
+    slug: "interior-design-systems",
+
     title: "Interior Design Systems",
     image: "/assets/proj-realestate.jpg",
     description:
@@ -196,6 +218,8 @@ export const projects: Project[] = [
   },
   {
     category: "Automotive",
+    slug: "smstech-sehgal-motorsports",
+
     title: "Smstech – Sehgal Motorsports",
     image: "/assets/proj-portfolio.jpg",
     description:
