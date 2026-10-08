@@ -53,7 +53,7 @@ export default function Navbar() {
         <nav
           className={`relative mx-auto flex items-center justify-between transition-[background-color,box-shadow,border-color,margin,height,max-width] duration-500 ${
             scrolled
-              ? "mt-3 h-16 max-w-6xl rounded-full border border-white/10 bg-black/55 px-4 backdrop-blur-md shadow-[0_20px_50px_-20px_rgba(0,0,0,0.9),0_0_32px_-4px_rgba(127,58,237,0.35)] sm:px-5"
+              ? "mt-3 h-16 max-w-6xl rounded-full border border-white/10 bg-black/85 px-4 backdrop-blur-md lg:bg-black/55 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.9),0_0_32px_-4px_rgba(127,58,237,0.35)] sm:px-5"
               : "mt-0 h-20 max-w-7xl border border-transparent px-2 sm:px-3"
           }`}
         >

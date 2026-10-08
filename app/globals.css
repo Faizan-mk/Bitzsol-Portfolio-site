@@ -135,8 +135,8 @@ html.light .chip { background: rgba(213, 255, 39, 0.25); color: #3f6212; }
 /* Aurora: slow-drifting green and purple light behind the whole page (transform-only animation, cheap to paint). */
 @keyframes auroraA { 0%, 100% { transform: translate(-10%, -5%) scale(1); } 50% { transform: translate(15%, 10%) scale(1.15); } }
 @keyframes auroraB { 0%, 100% { transform: translate(10%, 20%) scale(1.1); } 50% { transform: translate(-15%, -10%) scale(0.9); } }
-.aurora { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; contain: strict; }
-.aurora::before, .aurora::after { content: ""; position: absolute; width: 70vmax; height: 70vmax; border-radius: 9999px; will-change: transform; }
+.aurora { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+.aurora::before, .aurora::after { content: ""; position: absolute; width: 70vmax; height: 70vmax; border-radius: 9999px; }
 .aurora::before { left: -20vmax; top: -25vmax; background: radial-gradient(closest-side, rgba(213,255,39,0.10), transparent); animation: auroraA 28s ease-in-out infinite; }
 .aurora::after { right: -25vmax; bottom: -30vmax; background: radial-gradient(closest-side, rgba(127, 58, 237, 0.12), transparent); animation: auroraB 34s ease-in-out infinite; }
 html.light .aurora::before { background: radial-gradient(closest-side, rgba(213,255,39,0.16), transparent); }
@@ -152,8 +152,6 @@ html.light .aurora::after { background: radial-gradient(closest-side, rgba(127, 
 /* Film grain over the whole page for a tactile, printed feel. */
 .grain {
   position: fixed; inset: 0; z-index: 120; pointer-events: none; opacity: 0.05;
-  /* own compositor layer: the noise tile is rasterised once instead of repainting on scroll */
-  transform: translateZ(0); will-change: transform;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 html.light .grain { opacity: 0.035; }
@@ -239,3 +237,14 @@ html.light .chip-float > span { background: rgba(255, 255, 255, 0.8); }
 .group:hover .svc-ray { animation: rayShoot 1.2s ease-out infinite; }
 @keyframes twinkle { 0%, 100% { opacity: 0.15; transform: scale(0.6); } 50% { opacity: 1; transform: scale(1.4); } }
 @keyframes waveDrift { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(24px); } }
+
+/* Phones and tablets: GPU memory is tight, and running out of it tears the page into garbled stripes.
+   Drop the purely decorative layers that cost the most there: the full-screen grain, backdrop blurs,
+   masked gradient borders, hover-only spotlights, and the looping ornaments (.deco-loop). */
+@media (pointer: coarse), (max-width: 767px) {
+  .grain, .page-grid { display: none; }
+  .aurora::before, .aurora::after { animation: none; }
+  *, *::before, *::after { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+  .panel::before, .spotlight::after { display: none; }
+  .deco-loop { animation: none !important; }
+}

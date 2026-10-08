@@ -43,12 +43,12 @@ function Illustration({ index }: { index: number }) {
   return (
     <div aria-hidden className="relative h-full w-full">
       <div className="absolute left-1/2 top-1/2 h-44 w-44 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(127,58,237,0.45),rgba(213,255,39,0.08)_60%,transparent)] transition-transform duration-700 group-hover:scale-125" />
-      <div className="absolute left-1/2 top-1/2 h-40 w-40 -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-white/10" style={loop("orbitSpin", 30, 0, "linear")} />
+      <div className="absolute left-1/2 top-1/2 h-40 w-40 -translate-x-1/2 -translate-y-1/2 deco-loop rounded-full border border-dashed border-white/10" style={loop("orbitSpin", 30, 0, "linear")} />
 
       <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 h-full w-full">
         {pts.map(([x, y], i) => (
           <line
-            key={i} x1="50" y1="50" x2={x} y2={y}
+            key={i} x1="50" y1="50" x2={x} y2={y} className="deco-loop"
             stroke={i === 1 ? "var(--color-neon)" : "var(--color-brand-soft)"} strokeOpacity="0.55" strokeWidth="1"
             vectorEffect="non-scaling-stroke" style={{ strokeDasharray: "3 6", ...loop("dash", 1.6, i * 0.3, "linear") }}
           />
@@ -56,7 +56,7 @@ function Illustration({ index }: { index: number }) {
       </svg>
 
       {sparks.map(([x, y], i) => (
-        <span key={i} className={`absolute h-1 w-1 rounded-full ${i % 2 ? "bg-brand-soft" : "bg-neon"}`} style={{ left: `${x}%`, top: `${y}%`, ...loop("twinkle", 2.4, i * 0.4) }} />
+        <span key={i} className={`deco-loop absolute h-1 w-1 rounded-full ${i % 2 ? "bg-brand-soft" : "bg-neon"}`} style={{ left: `${x}%`, top: `${y}%`, ...loop("twinkle", 2.4, i * 0.4) }} />
       ))}
 
       {/* rays that shoot up from the tile on hover */}
@@ -74,9 +74,9 @@ function Illustration({ index }: { index: number }) {
 
       {sats.map((Sat, i) => (
         <div key={i} className="absolute -translate-x-1/2 -translate-y-1/2" style={{ left: `${pts[i][0]}%`, top: `${pts[i][1]}%` }}>
-          <div style={loop("chipFloat", 4 + i, i * -1.3)}>
+          <div className="deco-loop" style={loop("chipFloat", 4 + i, i * -1.3)}>
             <span className={`flex h-11 w-11 items-center justify-center rounded-full border bg-black/60 text-2xl backdrop-blur-sm ${i === 1 ? "border-neon/40 text-neon" : "border-brand-soft/40 text-brand-soft"} shadow-[0_0_20px_-6px_currentColor]`}>
-              <Sat style={spin && i === 0 ? loop("orbitSpin", 6, 0, "linear") : undefined} />
+              <Sat className="deco-loop" style={spin && i === 0 ? loop("orbitSpin", 6, 0, "linear") : undefined} />
             </span>
           </div>
         </div>
@@ -96,10 +96,10 @@ export default function Services() {
           { c: "bottom-24 right-[4%] h-10 w-10", d: -4 },
           { c: "left-[10%] top-24 h-6 w-6", d: -1 },
         ].map(({ c, d }) => (
-          <span key={c} className={`absolute rounded-full bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.45),rgba(127,58,237,0.55)_35%,rgba(127,58,237,0.08)_70%)] shadow-[0_0_30px_-4px_rgba(127,58,237,0.6)] ${c}`} style={loop("chipFloat", 7, d)} />
+          <span key={c} className={`deco-loop absolute rounded-full bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.45),rgba(127,58,237,0.55)_35%,rgba(127,58,237,0.08)_70%)] shadow-[0_0_30px_-4px_rgba(127,58,237,0.6)] ${c}`} style={loop("chipFloat", 7, d)} />
         ))}
         {[["left-0", ""], ["right-0", "-scale-x-100"]].map(([side, mirror]) => (
-          <svg key={side} viewBox="0 0 400 200" className={`absolute bottom-0 ${side} ${mirror} h-48 w-[28rem] opacity-50`} style={loop("waveDrift", 9)}>
+          <svg key={side} viewBox="0 0 400 200" className={`deco-loop absolute bottom-0 ${side} ${mirror} h-48 w-[28rem] opacity-50`} style={loop("waveDrift", 9)}>
             {Array.from({ length: 9 }).map((_, i) => (
               <path key={i} d={`M0 ${120 + i * 6} C 90 ${40 + i * 10}, 180 ${200 - i * 4}, 400 ${60 + i * 9}`} fill="none" stroke={i % 3 === 0 ? "var(--color-neon)" : "var(--color-brand-soft)"} strokeOpacity={0.25 - i * 0.02} strokeWidth="1" />
             ))}

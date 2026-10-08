@@ -187,8 +187,9 @@ export default function Hero() {
       if (!w || !h || (w === W && h === H)) return false;
       W = w; H = h;
       mobile = W < 640;
-      // the bits are flat squares, so 1.5x is as crisp as 2x at a fraction of the fill cost
-      dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      // the bits are flat squares, so 1.5x is as crisp as 2x at a fraction of the fill cost (1.25x on phones,
+      // where GPU memory is tight)
+      dpr = Math.min(window.devicePixelRatio || 1, mobile ? 1.25 : 1.5);
       canvas.width = W * dpr; canvas.height = H * dpr;
       canvas.style.width = `${W}px`; canvas.style.height = `${H}px`;
       maxN = mobile ? 1800 : 5000;

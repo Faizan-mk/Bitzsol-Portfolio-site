@@ -39,11 +39,11 @@ export default function About() {
         {/* the Bitzsol bulb at the centre of slowly turning orbits */}
         <div data-reveal aria-hidden className="relative mx-auto aspect-square w-full max-w-[26rem]">
           <div className="absolute inset-0 rounded-full glow [--glow:0.28]" />
-          <div className="orbit absolute inset-0 rounded-full border border-dashed border-white/12" />
-          <div className="orbit orbit-rev absolute inset-[16%] rounded-full border border-white/10">
+          <div className="deco-loop orbit absolute inset-0 rounded-full border border-dashed border-white/12" />
+          <div className="deco-loop orbit orbit-rev absolute inset-[16%] rounded-full border border-white/10">
             <span className="absolute -top-1 left-1/2 h-2 w-2 -translate-x-1/2 rounded-full bg-neon shadow-[0_0_14px_var(--color-neon)]" />
           </div>
-          <div className="orbit absolute inset-[31%] rounded-full border border-neon/25">
+          <div className="deco-loop orbit absolute inset-[31%] rounded-full border border-neon/25">
             <span className="absolute -bottom-1 left-1/2 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-brand-soft shadow-[0_0_12px_var(--color-brand)]" />
           </div>
 

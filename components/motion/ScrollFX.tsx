@@ -47,8 +47,10 @@ export default function ScrollFX() {
           ),
       });
 
-      // Card images drift inside their frames while scrolling.
-      gsap.utils.toArray<HTMLElement>("[data-parallax]").forEach((img) => {
+      // Card images drift inside their frames while scrolling (not on touch screens, where every drifting image
+      // would hold its own GPU layer).
+      const touch = window.matchMedia("(pointer: coarse)").matches;
+      if (!touch) gsap.utils.toArray<HTMLElement>("[data-parallax]").forEach((img) => {
         gsap.fromTo(img, { yPercent: -8 }, {
           yPercent: 8, ease: "none",
           scrollTrigger: { trigger: img.parentElement, start: "top bottom", end: "bottom top", scrub: true },
