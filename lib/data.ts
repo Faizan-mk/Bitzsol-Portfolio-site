@@ -95,6 +95,7 @@ export type Project = {
   image: string;
   description: string;
   tags: string[];
+  link?: string;
 };
 
 export const projects: Project[] = [
@@ -109,124 +110,46 @@ export const projects: Project[] = [
     tags: ["Chat & calls", "Wali dashboard", "CNIC verified"],
   },
   {
-    category: "E-Commerce · Shopify App",
-    slug: "instagram-feeds-for-shopify",
+    category: "AI Automation · Financial Advisory",
+    slug: "advisory-partners",
 
-    title: "Instagram Feeds for Shopify",
-    image: "/assets/proj-ecommerce.jpg",
+    title: "Advisory Partners",
+    image: "/assets/proj-advisory.jpg",
     description:
-      "Connects a store to its Instagram account to showcase live feeds and stories, boosting social proof and visual appeal with easy customization.",
-    tags: ["Live feeds", "Stories", "Customizable"],
+      "An AI automation programme for an Australian financial advisory firm that ran on manual admin across Teams, SharePoint, Zoho, XPM, Praemium and Class. A Python/FastAPI backend on Azure Functions with a reusable Claude knowledge-base pattern powers AI file notes from Teams meeting transcripts, a weekly onboarding scan that chases missing client data, letterhead letters as Word + PDF, and the client report as a SharePoint web part.",
+    tags: ["Python & FastAPI", "Azure Functions", "Claude API", "SharePoint"],
   },
   {
-    category: "Aviation",
-    slug: "amelia-os",
+    category: "AI Platform · Residential Construction",
+    slug: "ai-for-homebuilders",
 
-    title: "Amelia OS",
-    image: "/assets/proj-hostel.jpg",
+    title: "AI for Homebuilders",
+    image: "/assets/proj-homebuilders.jpg",
     description:
-      "An aviation management system for plane inspections, defect tracking, reporting and hangar planning, with OCR data capture and time-management tools.",
-    tags: ["OCR", "Inspections", "Hangar planning"],
+      "Homebuilders were drowning in warranty claims — homeowner emails, photos and forms arriving unstructured and triaged by hand. We built a warranty-claims AI platform that ingests claims, extracts and classifies issues with LLMs, and routes them to the right trade with the context already attached.",
+    tags: ["Next.js", "LLM triage", "MCP", "AWS"],
+    link: "https://aiforhomebuilders.com/",
   },
   {
-    category: "Travel & Planning",
-    slug: "lastbadtrip",
+    category: "AI Agent · Operations Automation",
+    slug: "starbond",
 
-    title: "LastBadTrip",
-    image: "/assets/proj-travel.jpg",
+    title: "Starbond",
+    image: "/assets/proj-starbond.jpg",
     description:
-      "A booking management platform for activity planning and voyages, with detailed financial reports, Stripe payments and multi-language support.",
-    tags: ["Stripe", "Multi-language", "Reports"],
+      "An AI digest agent for a busy ClickUp workspace. Read-only Python jobs audit the whole workspace and send daily and weekly digests by ClickUp DM: Claude condenses marketing comments into an executive summary, a rate-aware scanner flags Overdue / Stuck / Stale tasks per Space, and an independent watchdog alerts the operator if any digest stops running.",
+    tags: ["Python", "Claude API", "ClickUp API", "Watchdog"],
   },
   {
-    category: "Healthcare",
-    slug: "secret-align",
+    category: "LLM Product · Consumer AI",
+    slug: "pocket-pinky",
 
-    title: "Secret Align",
-    image: "/assets/proj-password.jpg",
+    title: "Pocket Pinky",
+    image: "/assets/proj-pocketpinky.jpg",
     description:
-      "Lets dentists order custom clear aligners online, with 3D scan uploads, treatment instructions, online payments and patient history in one workflow.",
-    tags: ["3D scans", "Payments", "Patient history"],
-  },
-  {
-    category: "Finance",
-    slug: "consultation-amaltitek",
-
-    title: "Consultation Amaltitek",
-    image: "/assets/proj-crypto.jpg",
-    description:
-      "A financial management system covering assets and liabilities, tax, company finances, balance sheets, trial balance, journal entries and reporting.",
-    tags: ["Balance sheets", "Journals", "Tax"],
-  },
-  {
-    category: "Campaigns",
-    slug: "official-truck-br",
-
-    title: "Official Truck BR",
-    image: "/assets/proj-twitter.jpg",
-    description:
-      "A coupon-redemption platform for live campaigns serving thousands of daily visitors, with effortless bulk coupon creation for businesses.",
-    tags: ["Coupons", "Bulk creation", "Campaigns"],
-  },
-  {
-    category: "E-Commerce",
-    slug: "barnard-pt-moveis-online",
-
-    title: "Barnard PT: Móveis Online",
-    image: "/assets/proj-coffee-shop.jpg",
-    description:
-      "A full-featured furniture e-commerce platform with inventory tracking, shipping management, carts, online payments and order management.",
-    tags: ["Inventory", "Shipping", "Payments"],
-  },
-  {
-    category: "Marketing & Design",
-    slug: "netbezig",
-
-    title: "NetBezig",
-    image: "/assets/proj-cblt.jpg",
-    description:
-      "A marketing services agency platform with seamless online payments, efficient management tools and a clean, user-friendly design.",
-    tags: ["Payments", "Management tools", "UX"],
-  },
-  {
-    category: "Education · Game",
-    slug: "abcedlalecture",
-
-    title: "Abcedlalecture",
-    image: "/assets/proj-rishta.jpg",
-    description:
-      "An interactive game that helps students learn French through engaging challenges and educational activities.",
-    tags: ["Gamified", "French", "Interactive"],
-  },
-  {
-    category: "Billing & Fintech",
-    slug: "adly",
-
-    title: "Adly",
-    image: "/assets/proj-auth.jpg",
-    description:
-      "Users top up accounts, pay by uploading receipts and withdraw funds, with a built-in affiliate program that rewards referrals.",
-    tags: ["Top-ups", "Receipts", "Affiliate"],
-  },
-  {
-    category: "Customizer",
-    slug: "interior-design-systems",
-
-    title: "Interior Design Systems",
-    image: "/assets/proj-realestate.jpg",
-    description:
-      "An intuitive wardrobe configurator: customize window sizes, frames, doors, colors and materials to fit any space.",
-    tags: ["Configurator", "Materials", "Custom sizes"],
-  },
-  {
-    category: "Automotive",
-    slug: "smstech-sehgal-motorsports",
-
-    title: "Smstech – Sehgal Motorsports",
-    image: "/assets/proj-portfolio.jpg",
-    description:
-      "A Shopify-integrated system to post ads, manage vehicle sales and purchases, run inspections and generate reports in one platform.",
-    tags: ["Shopify", "Inspections", "Reports"],
+      "An AI dating companion that gives genuinely personal advice — not a generic chatbot wrapper. A conversational AI product with persona prompting and conversation memory, coaching users from first-date nerves to long-term relationship questions.",
+    tags: ["Next.js", "LLM APIs", "Conversation memory"],
+    link: "https://pocketpinky.com/",
   },
 ];
 

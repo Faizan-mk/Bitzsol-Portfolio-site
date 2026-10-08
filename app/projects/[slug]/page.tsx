@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { HiArrowLeft, HiArrowRight, HiCheck } from "react-icons/hi2";
+import { HiArrowLeft, HiArrowRight, HiArrowUpRight, HiCheck } from "react-icons/hi2";
 import RevealFrame from "@/components/motion/RevealFrame";
 import Heading from "@/components/ui/Heading";
 import PageHeader from "@/components/ui/PageHeader";
@@ -91,7 +91,12 @@ export default async function ProjectPage({ params }: Props) {
               <dt className="text-xs uppercase tracking-[0.2em] text-white/45">Pricing</dt>
               <dd className="mt-1.5 text-sm font-semibold text-white">Fixed, transparent rate</dd>
             </div>
-            <Link href="/contact" className="btn-neon mt-auto !py-2.5 !text-xs">Start a similar project <HiArrowRight /></Link>
+            <div className="mt-auto flex flex-col gap-3">
+              {p.link && (
+                <a href={p.link} target="_blank" rel="noopener noreferrer" className="btn-outline !py-2.5 !text-xs">Visit live site <HiArrowUpRight /></a>
+              )}
+              <Link href="/contact" className="btn-neon !py-2.5 !text-xs">Start a similar project <HiArrowRight /></Link>
+            </div>
           </dl>
         </section>
 
