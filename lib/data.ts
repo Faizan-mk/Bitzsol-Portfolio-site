@@ -243,18 +243,3 @@ export const testimonials = [
     initials: "SA",
   },
 ];
-
-export type ClientWork = {
-  client: string;
-  product: string;
-  text: string;
-  url: string | null; // live link; null shows "Live link coming soon"
-  image?: string; // product screenshot in /public; without one a styled mockup is shown
-};
-
-// TODO: placeholder products until the real product names and live links are confirmed.
-export const trustedBy: ClientWork[] = [
-  { client: "Steven Febry", product: "Booking Platform", text: "A web platform for managing bookings, payments and customers.", url: null },
-  { client: "Advisory Friends", product: "Business Website", text: "A professional website that presents their services and brings in leads.", url: null },
-  { client: "Selr AI Ltd", product: "AI Sales Assistant", text: "An AI-powered tool that automates follow-ups and customer conversations.", url: null },
-];

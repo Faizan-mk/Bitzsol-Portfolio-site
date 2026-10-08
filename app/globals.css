@@ -228,12 +228,14 @@ html.light .outline-name { -webkit-text-stroke-color: rgba(70, 122, 0, 0.4); bac
 .chip-float { animation: chipFloat 6s ease-in-out infinite; }
 html.light .chip-float > span { background: rgba(255, 255, 255, 0.8); }
 
-/* Service icon tiles: a conic light spins behind the tile so it reads as a light running round the border,
-   and the tile floats gently. Hovering the card speeds the light up. */
-.svc-ring {
-  background: conic-gradient(from 0deg, transparent 0 55%, var(--color-neon) 75%, var(--color-brand) 90%, transparent 100%);
-  animation: orbitSpin 4s linear infinite;
+/* Services cards: a neon glow on hover, rays off the art, twinkling sparks and drifting background waves. */
+.svc-card { transition: translate 0.45s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, box-shadow 0.4s ease; }
+.svc-card:hover {
+  translate: 0 -6px;
+  border-color: color-mix(in oklab, var(--color-neon) 70%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in oklab, var(--color-neon) 45%, transparent), 0 24px 60px -18px rgba(213,255,39,0.35), inset 0 0 40px -18px rgba(213,255,39,0.4);
 }
-.svc-icon { animation: chipFloat 5s ease-in-out infinite; }
-.svc-icon::before { content: ""; position: absolute; inset: 0; border-radius: inherit; background: var(--color-line); }
-.group:hover .svc-ring { animation-duration: 1.4s; }
+@keyframes rayShoot { 0% { transform: translateY(10px) scaleY(0.2); opacity: 0; } 30% { opacity: 1; } 100% { transform: translateY(-60px) scaleY(1); opacity: 0; } }
+.group:hover .svc-ray { animation: rayShoot 1.2s ease-out infinite; }
+@keyframes twinkle { 0%, 100% { opacity: 0.15; transform: scale(0.6); } 50% { opacity: 1; transform: scale(1.4); } }
+@keyframes waveDrift { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(24px); } }

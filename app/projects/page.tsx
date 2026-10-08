@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Projects from "@/components/sections/Projects";
 import Testimonials from "@/components/sections/Testimonials";
-import TrustedBy from "@/components/sections/TrustedBy";
 import PageHeader from "@/components/ui/PageHeader";
 
 export const metadata: Metadata = { title: "Work" };
@@ -18,7 +17,6 @@ export default function ProjectsPage() {
       />
       <Projects />
       <Testimonials />
-      <TrustedBy />
     </>
   );
 }
