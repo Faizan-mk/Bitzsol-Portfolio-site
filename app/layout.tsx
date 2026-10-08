@@ -17,6 +17,10 @@ const body = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
+  // absolute base for the share image and other metadata URLs (Vercel sets this on production builds)
+  metadataBase: new URL(
+    process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "http://localhost:3000"
+  ),
   title: { default: "Bitzsol Digital | Build the Next Era", template: "%s | Bitzsol Digital" },
   description:
     "Bitzsol Digital (SMC-PVT) Ltd — technology-driven digital solutions. Web, e-commerce and cloud products, AI and GoHighLevel automation, marketing, SEO and social media at fixed, transparent rates.",

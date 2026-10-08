@@ -57,12 +57,15 @@ body { background: var(--color-ink); color: color-mix(in oklab, var(--color-whit
 html.light .panel { box-shadow: 0 1px 2px rgba(23, 19, 12, 0.04), 0 8px 24px -12px rgba(23, 19, 12, 0.08); }
 .panel::before {
   content: ""; position: absolute; inset: -1px; border-radius: inherit; padding: 1px; pointer-events: none;
-  background: linear-gradient(140deg, rgba(213,255,39,0.45), transparent 35%, transparent 65%, rgba(213,255,39,0.25));
+  /* conic so a hovered card's light can travel round the border (see panelSpin) */
+  background: conic-gradient(from var(--panel-angle), rgba(213,255,39,0.5), transparent 22%, transparent 45%, rgba(127,58,237,0.45) 60%, transparent 78%, rgba(213,255,39,0.5));
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor; mask-composite: exclude;
   opacity: 0.55; transition: opacity 0.4s ease;
 }
-.panel:hover::before { opacity: 1; }
+.panel:hover::before { opacity: 1; animation: panelSpin 4s linear infinite; }
+@property --panel-angle { syntax: "<angle>"; initial-value: 140deg; inherits: false; }
+@keyframes panelSpin { to { --panel-angle: 500deg; } }
 .panel-hover:hover {
   translate: 0 -4px;
   border-color: rgba(213,255,39,0.4);
@@ -190,3 +193,37 @@ html.light .outline-name { -webkit-text-stroke-color: rgba(70, 122, 0, 0.4); bac
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* Faint blueprint grid behind inner-page headers, fading out toward the edges. */
+.page-grid {
+  background-image:
+    linear-gradient(color-mix(in oklab, var(--color-white) 6%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklab, var(--color-white) 6%, transparent) 1px, transparent 1px);
+  background-size: 56px 56px;
+  background-position: center top;
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 30%, transparent 75%);
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 30%, transparent 75%);
+}
+
+/* Route-change curtain (see app/template.tsx). */
+.route-curtain {
+  position: fixed; inset: 0; z-index: 150; pointer-events: none;
+  background: var(--color-ink);
+  transform-origin: top;
+}
+.route-curtain::after {
+  content: ""; position: absolute; inset-inline: 0; bottom: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--color-neon), transparent);
+  box-shadow: 0 0 24px var(--color-neon);
+}
+
+/* Hollow version of a word, shown under its fill until the fill scrolls in (Why section). */
+.outline-word { color: transparent; -webkit-text-stroke: 1px color-mix(in oklab, var(--color-white) 30%, transparent); }
+
+/* About visual: orbits turn slowly, the chips riding them bob gently (transform-only, compositor friendly). */
+@keyframes orbitSpin { to { transform: rotate(360deg); } }
+@keyframes chipFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+.orbit { animation: orbitSpin 40s linear infinite; }
+.orbit-rev { animation-duration: 28s; animation-direction: reverse; }
+.chip-float { animation: chipFloat 6s ease-in-out infinite; }
+html.light .chip-float > span { background: rgba(255, 255, 255, 0.8); }

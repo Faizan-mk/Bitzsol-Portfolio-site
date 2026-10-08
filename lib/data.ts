@@ -31,14 +31,6 @@ export const navLinks = [
   { href: "/contact", label: "Contact" },
 ];
 
-export const snapshot = [
-  { label: "Legal Name", value: "Bitzsol Digital (SMC-PVT) Ltd" },
-  { label: "Website", value: "www.bitzsol.com" },
-  { label: "What We Do", value: "Web, apps, e-commerce, cloud, AI automation, GoHighLevel & digital marketing" },
-  { label: "How We Work", value: "Fixed, transparent pricing" },
-  { label: "Reach", value: "Global clientele" },
-] as const;
-
 export const values = [
   { num: "01", title: "Innovation", text: "We invest in next-generation capabilities and stay ahead of the curve." },
   { num: "02", title: "Transparency", text: "Fixed, honest pricing and clear communication at every step." },
@@ -252,4 +244,17 @@ export const testimonials = [
   },
 ];
 
-export const trustedBy = ["Steven Febry", "Advisory Friends", "Selr AI Ltd"];
+export type ClientWork = {
+  client: string;
+  product: string;
+  text: string;
+  url: string | null; // live link; null shows "Live link coming soon"
+  image?: string; // product screenshot in /public; without one a styled mockup is shown
+};
+
+// TODO: placeholder products until the real product names and live links are confirmed.
+export const trustedBy: ClientWork[] = [
+  { client: "Steven Febry", product: "Booking Platform", text: "A web platform for managing bookings, payments and customers.", url: null },
+  { client: "Advisory Friends", product: "Business Website", text: "A professional website that presents their services and brings in leads.", url: null },
+  { client: "Selr AI Ltd", product: "AI Sales Assistant", text: "An AI-powered tool that automates follow-ups and customer conversations.", url: null },
+];

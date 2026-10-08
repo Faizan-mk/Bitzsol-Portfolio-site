@@ -64,18 +64,16 @@ export default function Footer() {
             </motion.p>
           </div>
           <Magnetic strength={0.4}>
-            <a
-              href={company.website}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Get started — visit our website"
+            <Link
+              href="/contact"
+              aria-label="Get started — contact us"
               className="group relative flex h-32 w-32 shrink-0 items-center justify-center rounded-full bg-neon text-sm font-semibold text-on-neon shadow-[0_0_40px_-6px_rgba(213,255,39,0.55)] transition-transform duration-500 hover:scale-105 sm:h-36 sm:w-36"
             >
               <span className="flex flex-col items-center gap-1">
                 <HiArrowUpRight className="text-2xl transition-transform duration-500 group-hover:scale-110" />
                 Get Started
               </span>
-            </a>
+            </Link>
           </Magnetic>
         </div>
 
@@ -151,7 +149,7 @@ export default function Footer() {
               </li>
               <li className="flex items-start gap-3">
                 <HiOutlineChatBubbleLeftRight className="mt-0.5 shrink-0 text-neon" />
-                Use the Contact Us form on our website to start a conversation.
+                <Link href="/contact" className="transition hover:text-white">Visit our contact page to start a conversation.</Link>
               </li>
             </ul>
           </div>

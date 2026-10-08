@@ -1,6 +1,6 @@
 import { FaStar } from "react-icons/fa6";
 import Heading from "@/components/ui/Heading";
-import { testimonials, trustedBy } from "@/lib/data";
+import { testimonials } from "@/lib/data";
 
 export default function Testimonials() {
   return (
@@ -22,15 +22,6 @@ export default function Testimonials() {
             </figcaption>
           </figure>
         ))}
-      </div>
-
-      <div data-reveal className="mt-10 flex flex-col items-center gap-5 border-t border-line pt-10">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-white/40">Trusted by</p>
-        <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-3">
-          {trustedBy.map((n) => (
-            <span key={n} className="text-lg font-bold text-white/70 transition hover:text-neon sm:text-xl">{n}</span>
-          ))}
-        </div>
       </div>
     </section>
   );

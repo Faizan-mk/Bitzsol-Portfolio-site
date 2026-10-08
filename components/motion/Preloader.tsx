@@ -6,6 +6,14 @@ import { LOGO_BULB, LOGO_PATH, LOGO_VIEWBOX } from "../brand/logo-path";
 
 export const INTRO_DELAY = 3.1; // seconds the page waits for the preloader to lift
 
+let bootAt: number | null = null;
+
+/* Seconds left until the intro lifts: the full delay on first load, zero for pages reached later by navigation. */
+export function introDelay() {
+  if (bootAt === null) return INTRO_DELAY;
+  return Math.max(0, INTRO_DELAY - (performance.now() - bootAt) / 1000);
+}
+
 const ease = [0.76, 0, 0.24, 1] as const;
 const DRAW = 1.7; // logo stroke-draw time
 const HOLD = 2.6; // when the curtains start to open
@@ -20,6 +28,7 @@ export default function Preloader() {
   const numRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
+    bootAt ??= performance.now();
     if (reduced) { setDone(true); return; }
     document.body.style.overflow = "hidden";
     const start = performance.now();

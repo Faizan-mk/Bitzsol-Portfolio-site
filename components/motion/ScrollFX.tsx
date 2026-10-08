@@ -67,15 +67,29 @@ export default function ScrollFX() {
         });
       }
 
-      // Timeline rail draws itself, dots pop in as each job arrives.
+      // Timeline rail draws itself (down, or across when laid out horizontally), dots pop in as each step arrives.
       gsap.utils.toArray<HTMLElement>("[data-line]").forEach((line) => {
-        gsap.fromTo(line, { scaleY: 0 }, {
-          scaleY: 1, ease: "none", transformOrigin: "top",
-          scrollTrigger: { trigger: line.parentElement, start: "top 75%", end: "bottom 60%", scrub: 0.6 },
+        const across = line.offsetWidth > line.offsetHeight;
+        gsap.fromTo(line, across ? { scaleX: 0 } : { scaleY: 0 }, {
+          ...(across ? { scaleX: 1 } : { scaleY: 1 }), ease: "none", transformOrigin: across ? "left" : "top",
+          scrollTrigger: { trigger: line.parentElement, start: "top 75%", end: across ? "top 35%" : "bottom 60%", scrub: 0.6 },
         });
       });
-      gsap.utils.toArray<HTMLElement>("[data-dot]").forEach((dot) => {
-        gsap.from(dot, { scale: 0, duration: 0.6, ease: "back.out(3)", scrollTrigger: { trigger: dot, start: "top 75%" } });
+      gsap.utils.toArray<HTMLElement>("[data-dot]").forEach((dot, i, all) => {
+        // dots sharing a row would all trigger at once, so stagger them left to right
+        const row = all.filter((d) => Math.abs(d.offsetTop - dot.offsetTop) < 4 && d.offsetParent === dot.offsetParent);
+        gsap.from(dot, {
+          scale: 0, duration: 0.6, ease: "back.out(3)", delay: row.length > 1 ? row.indexOf(dot) * 0.12 : 0,
+          scrollTrigger: { trigger: dot, start: "top 75%" },
+        });
+      });
+
+      // Outlined words fill in one after another.
+      gsap.utils.toArray<HTMLElement>("[data-fill]").forEach((el) => {
+        gsap.fromTo(el.querySelectorAll("[data-fill-word]"), { clipPath: "inset(0 100% 0 0)" }, {
+          clipPath: "inset(0 0% 0 0)", ease: "none", stagger: 0.6,
+          scrollTrigger: { trigger: el, start: "top 85%", end: "top 35%", scrub: 0.5 },
+        });
       });
 
       // Process steps slide in from alternating sides.

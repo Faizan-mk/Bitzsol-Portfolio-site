@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { FaLinkedinIn } from "react-icons/fa6";
 import { HiOutlineEnvelope, HiOutlineGlobeAlt, HiOutlinePhone } from "react-icons/hi2";
-import Heading from "@/components/ui/Heading";
+import PageHeader from "@/components/ui/PageHeader";
 import { company } from "@/lib/data";
 
 export const metadata: Metadata = { title: "Contact" };
@@ -16,30 +16,35 @@ const channels = [
 
 export default function ContactPage() {
   return (
-    <section className="mx-auto max-w-5xl px-5 pb-12 pt-40 sm:px-8">
-      <Heading kicker="Get in Touch" title="Let's Talk Business" />
-      <p className="mx-auto -mt-6 mb-14 max-w-xl text-center text-sm leading-relaxed text-white/60 sm:text-base">
-        {company.ctaLine} Tell us about your project and we&apos;ll get back to you.
-      </p>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {channels.map(({ label, value, href, Icon, external }) => (
-          <a
-            key={value}
-            href={href}
-            data-reveal
-            {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-            className="spotlight panel panel-hover group flex items-start gap-4 p-6"
-          >
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-neon/10 text-xl text-neon">
-              <Icon />
-            </span>
-            <span className="min-w-0">
-              <span className="block text-xs uppercase tracking-[0.2em] text-white/45">{label}</span>
-              <span className="mt-1 block break-all text-sm font-semibold text-white transition group-hover:text-neon">{value}</span>
-            </span>
-          </a>
-        ))}
-      </div>
-    </section>
+    <>
+      <PageHeader
+        crumb="Contact"
+        kicker="Get in Touch"
+        title="Let's build something great"
+        accent={2}
+        intro={`${company.ctaLine} Tell us about your project and we'll get back to you.`}
+      />
+      <section className="mx-auto max-w-5xl px-5 pb-12 pt-10 sm:px-8">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {channels.map(({ label, value, href, Icon, external }) => (
+            <a
+              key={value}
+              href={href}
+              data-reveal
+              {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+              className="spotlight panel panel-hover group flex items-start gap-4 p-6"
+            >
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-neon/10 text-xl text-neon">
+                <Icon />
+              </span>
+              <span className="min-w-0">
+                <span className="block text-xs uppercase tracking-[0.2em] text-white/45">{label}</span>
+                <span className="mt-1 block break-all text-sm font-semibold text-white transition group-hover:text-neon">{value}</span>
+              </span>
+            </a>
+          ))}
+        </div>
+      </section>
+    </>
   );
 }

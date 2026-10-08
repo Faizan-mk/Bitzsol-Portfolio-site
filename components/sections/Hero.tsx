@@ -4,7 +4,7 @@ import { motion, useReducedMotion } from "motion/react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import Magnetic from "@/components/motion/Magnetic";
-import { INTRO_DELAY } from "@/components/motion/Preloader";
+import { introDelay } from "@/components/motion/Preloader";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 const HOLD = 4.2; // seconds each shape holds before the bits move on
@@ -113,7 +113,9 @@ export default function Hero() {
   const morphRef = useRef<(i: number) => void>(() => {});
   const [active, setActive] = useState(0);
   const [cycleKey, setCycleKey] = useState(0); // restarts the auto-advance after a manual pick
-  const d = reduced ? 0 : INTRO_DELAY;
+  // the intro delay only applies on first load; coming back to the home page later starts right away
+  const [intro] = useState(introDelay);
+  const d = reduced ? 0 : intro;
 
   // The particle engine: lives entirely outside React state for speed.
   useEffect(() => {
