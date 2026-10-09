@@ -9,7 +9,6 @@ import ScrollFX from "@/components/motion/ScrollFX";
 import SmoothScroll from "@/components/motion/SmoothScroll";
 import "./globals.css";
 
-// Bitzsol brand typeface: Plus Jakarta Sans (body + display).
 const body = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["200", "300", "400", "500", "600", "700", "800"],
@@ -17,21 +16,16 @@ const body = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  // absolute base for the share image and other metadata URLs (Vercel sets this on production builds)
   metadataBase: new URL(
     process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "http://localhost:3000"
   ),
   title: { default: "Bitzsol Digital | Build the Next Era", template: "%s | Bitzsol Digital" },
   description:
-    "Bitzsol Digital (SMC-PVT) Ltd — technology-driven digital solutions. Web, e-commerce and cloud products, AI and GoHighLevel automation, marketing, SEO and social media at fixed, transparent rates.",
+    "Bitzsol Digital (SMC-PVT) Ltd — technology-driven digital solutions. Web, e-commerce and cloud products, software and game development, AI and GoHighLevel automation, marketing and social media at fixed, transparent rates.",
 };
 
-// Runs before first paint: always opens the page at the top, since the intro animation and hero parallax
-// assume a fresh start rather than a restored scroll position. The site always opens in dark mode;
-// light mode is a per-visit choice from the toggle.
 const themeScript = `try{history.scrollRestoration="manual";window.scrollTo(0,0)}catch(e){}`;
 
-// Shared chrome lives here so it persists across routes: the preloader and navbar intro play once per visit.
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={body.variable} suppressHydrationWarning>

@@ -4,26 +4,22 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { LOGO_BULB, LOGO_PATH, LOGO_VIEWBOX } from "../brand/logo-path";
 
-export const INTRO_DELAY = 3.1; // seconds the page waits for the preloader to lift
+export const INTRO_DELAY = 3.1;
 
 let bootAt: number | null = null;
 
-/* Seconds left until the intro lifts: the full delay on first load, zero for pages reached later by navigation. */
 export function introDelay() {
   if (bootAt === null) return INTRO_DELAY;
   return Math.max(0, INTRO_DELAY - (performance.now() - bootAt) / 1000);
 }
 
 const ease = [0.76, 0, 0.24, 1] as const;
-const DRAW = 1.7; // logo stroke-draw time
-const HOLD = 2.6; // when the curtains start to open
+const DRAW = 1.7;
+const HOLD = 2.6;
 
-/* Logo intro: the Bitzsol wordmark is drawn in a neon stroke, fills in, the bulb lights up, a shine sweeps across,
-   then the screen splits open like curtains. */
 export default function Preloader() {
   const reduced = useReducedMotion();
   const [done, setDone] = useState(false);
-  // the counter writes straight to the DOM: a React render per frame would compete with the intro animation
   const barRef = useRef<HTMLDivElement>(null);
   const numRef = useRef<HTMLSpanElement>(null);
 
@@ -48,7 +44,6 @@ export default function Preloader() {
     <AnimatePresence>
       {!done && (
         <motion.div key="preloader" className="fixed inset-0 z-[200]" exit={{ pointerEvents: "none" }} transition={{ duration: 1 }}>
-          {/* two curtains that part on exit */}
           <motion.div className="absolute inset-x-0 top-0 h-1/2 bg-black" exit={{ y: "-100%" }} transition={{ duration: 0.9, ease }} />
           <motion.div className="absolute inset-x-0 bottom-0 h-1/2 bg-black" exit={{ y: "100%" }} transition={{ duration: 0.9, ease }} />
 
@@ -72,7 +67,6 @@ export default function Preloader() {
                     <stop offset="0.5" style={{ stopColor: "var(--sig-b)" }} />
                     <stop offset="1" style={{ stopColor: "var(--sig-c)" }} />
                   </linearGradient>
-                  {/* bright band that sweeps across the finished logo */}
                   <linearGradient id="pre-shine" x1="0" y1="0" x2="1" y2="0" gradientUnits="objectBoundingBox">
                     <stop offset="0" stopColor="#fff" stopOpacity="0" />
                     <stop offset="0.5" stopColor="#fff" stopOpacity="0.85" />
@@ -85,7 +79,6 @@ export default function Preloader() {
                   </filter>
                 </defs>
 
-                {/* 1. the pen draws the outline */}
                 <motion.path
                   d={LOGO_PATH}
                   fill="transparent"
@@ -98,7 +91,6 @@ export default function Preloader() {
                   animate={{ pathLength: 1, opacity: 1 }}
                   transition={{ pathLength: { duration: DRAW, ease: [0.65, 0, 0.35, 1] }, opacity: { duration: 0.2 } }}
                 />
-                {/* 2. ink floods in */}
                 <motion.path
                   d={LOGO_PATH}
                   fill="var(--color-white)"
@@ -106,7 +98,6 @@ export default function Preloader() {
                   animate={{ opacity: 1 }}
                   transition={{ delay: DRAW - 0.35, duration: 0.6 }}
                 />
-                {/* the bulb switches on */}
                 <motion.path
                   d={LOGO_BULB}
                   fill="var(--color-neon)"
@@ -115,7 +106,6 @@ export default function Preloader() {
                   animate={{ opacity: [0, 1, 0.3, 1] }}
                   transition={{ delay: DRAW, duration: 0.5, times: [0, 0.3, 0.55, 1] }}
                 />
-                {/* 3. a shine passes over it */}
                 <g clipPath="url(#pre-clip)">
                   <motion.rect
                     y="-10"

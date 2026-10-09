@@ -4,7 +4,6 @@ import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { HiOutlineMoon, HiOutlineSun } from "react-icons/hi2";
 
-/* Dark ⇄ light switch. The site always opens dark; this only changes the current visit. */
 export default function ThemeToggle() {
   const [light, setLight] = useState(false);
 

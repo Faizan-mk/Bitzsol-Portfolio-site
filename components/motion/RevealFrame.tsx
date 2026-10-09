@@ -6,7 +6,6 @@ import { introDelay } from "./Preloader";
 
 const ease = [0.76, 0, 0.24, 1] as const;
 
-/* Wipes its content open from the top while the content settles from a slight zoom. */
 export default function RevealFrame({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   const reduced = useReducedMotion();
   const [delay] = useState(introDelay);

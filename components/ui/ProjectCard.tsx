@@ -6,7 +6,6 @@ import type { Project } from "@/lib/data";
 export default function ProjectCard({ project: p }: { project: Project }) {
   return (
     <article data-tilt data-card className="spotlight panel group relative flex h-full flex-col overflow-hidden hover:border-brand/40">
-      {/* stretched link: the whole card opens the project page, the live-site button sits above it */}
       <Link href={`/projects/${p.slug}`} aria-label={p.title} data-cursor-label="View" className="absolute inset-0 z-10" />
       <div className="relative h-48 overflow-hidden">
         <div data-parallax className="absolute -inset-y-[10%] inset-x-0">

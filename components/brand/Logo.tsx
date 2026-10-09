@@ -1,6 +1,5 @@
 import { LOGO_B, LOGO_BULB, LOGO_REST, LOGO_VIEWBOX } from "./logo-path";
 
-/* Bitzsol wordmark. Letters take the current text colour; the lightbulb base glows in the accent. */
 export default function Logo({ className = "", title = "Bitzsol" }: { className?: string; title?: string }) {
   return (
     <svg viewBox={LOGO_VIEWBOX} className={className} role="img" aria-label={title}>

@@ -12,7 +12,6 @@ import { scrollToTop } from "@/components/motion/SmoothScroll";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
-/* Live clock in the company's timezone, so visitors know when the team is online. */
 function LocalTime() {
   const [now, setNow] = useState<string | null>(null);
   useEffect(() => {
@@ -28,11 +27,9 @@ function LocalTime() {
 export default function Footer() {
   return (
     <footer id="contact" className="relative scroll-mt-10 overflow-hidden border-t border-line bg-black pt-20">
-      {/* soft purple glow rising from the bottom */}
       <div aria-hidden className="pointer-events-none absolute -bottom-40 left-1/2 h-96 w-[60rem] -translate-x-1/2 rounded-full glow [--glow:0.10]" />
 
       <div className="relative mx-auto max-w-7xl px-5 sm:px-8">
-        {/* call to action */}
         <div className="flex flex-col items-start justify-between gap-8 border-b border-line pb-14 md:flex-row md:items-end">
           <div>
             <motion.p
@@ -77,7 +74,6 @@ export default function Footer() {
           </Magnetic>
         </div>
 
-        {/* columns */}
         <div className="grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
           <div>
             <Logo className="h-10 w-auto text-white" />
@@ -173,7 +169,6 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* giant outlined name, rises into view */}
       <div aria-hidden className="relative select-none overflow-hidden">
         <motion.p
           initial={{ y: "60%", opacity: 0 }}

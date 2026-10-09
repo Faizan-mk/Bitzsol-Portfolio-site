@@ -17,8 +17,6 @@ export default function Process() {
 
       <div className="mt-20">
         <Heading kicker="Step by Step" title="How We Work" />
-        {/* a timeline: the rail draws itself as you scroll and each step's dot pops in (ScrollFX: [data-line], [data-dot]).
-            Vertical on phones, horizontal from lg. */}
         <div className="relative">
           <div aria-hidden className="absolute bottom-0 left-[27px] top-0 w-px bg-linear-to-b from-white/10 via-white/10 to-transparent lg:bg-none lg:bg-line lg:inset-x-0 lg:bottom-auto lg:top-[27px] lg:h-px lg:w-auto" />
           <div aria-hidden data-line className="absolute bottom-0 left-[27px] top-0 w-px bg-linear-to-b from-neon via-brand to-transparent lg:to-brand lg:inset-x-0 lg:bottom-auto lg:top-[27px] lg:h-px lg:w-auto lg:bg-linear-to-r" />

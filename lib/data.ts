@@ -13,7 +13,7 @@ export const company = {
   phone2Href: "tel:+923390449978",
   linkedin: "https://pk.linkedin.com/company/bitzsol",
   about:
-    "Bitzsol Digital (SMC-PVT) Ltd is a technology-driven digital solutions company. We build web, e-commerce and cloud products, automate workflows with AI and GoHighLevel, and grow brands through marketing, SEO and social media — all at fixed, transparent rates.",
+    "Bitzsol Digital (SMC-PVT) Ltd is a technology-driven digital solutions company. We build web, e-commerce and cloud products, custom software and games, automate workflows with AI and GoHighLevel, and grow brands through marketing and social media — all at fixed, transparent rates.",
   philosophy:
     "As a leading contributor to driving change, we understand the importance of continued self-reinvention. We accomplish this by investing in next-generation capabilities that enhance our differentiation in key growth areas and by investing in talent to ensure we have specialized skills to resolve business problems. Backed by our expertise and diverse global workforce, our ultimate goal is to offer sustainable and meaningful value across all directions.",
   mission:
@@ -62,13 +62,12 @@ export const services = [
   { num: "03", title: "GoHighLevel (GHL)", text: "GoHighLevel setup and automation: CRM, funnels, follow-ups and appointment booking in one platform." },
   { num: "04", title: "Digital Marketing", text: "Data-informed campaigns that build awareness, generate leads and turn attention into measurable growth." },
   { num: "05", title: "Social Media Management", text: "Strategy, content and community management that keep your brand active, engaging and consistent." },
-  { num: "06", title: "SEO", text: "Technical and content optimization that lifts your search visibility and attracts qualified organic traffic." },
-  { num: "07", title: "Graphic Design", text: "Logos, brand identities and marketing creatives with a distinctive look across every channel." },
-  { num: "08", title: "Video Editing", text: "Polished, scroll-stopping edits for promos, social content and product stories." },
+  { num: "06", title: "Software Development", text: "Custom software, internal tools and integrations built to fit how your business actually works, and to scale with it." },
+  { num: "07", title: "Game Development", text: "Engaging 2D and 3D games for mobile, web and desktop, from concept and gameplay to launch and live updates." },
 ];
 
 export const advantages = [
-  { num: "1", title: "Fixed, low fee", text: "Transparent, fixed pricing across development, automation, marketing, SEO, design and video — premium quality that fits businesses of every size." },
+  { num: "1", title: "Fixed, low fee", text: "Transparent, fixed pricing across web, software and game development, automation and marketing — premium quality that fits businesses of every size." },
   { num: "2", title: "Fast", text: "Streamlined processes and a dedicated team deliver quickly, so you stay ahead of the competition and hit your objectives on time." },
   { num: "3", title: "Scalable", text: "Solutions designed to grow with you — from startups chasing rapid growth to enterprises expanding their digital footprint." },
   { num: "4", title: "Efficient", text: "Modern technology and best practices optimize your workflows, maximizing return on investment with minimal resource expenditure." },
@@ -102,7 +101,6 @@ export const projects: Project[] = [
   {
     category: "Mobile App · Matchmaking",
     slug: "matrimonial-app",
-
     title: "Matrimonial App",
     image: "/assets/proj-matrimonial.jpg",
     description:
@@ -112,7 +110,6 @@ export const projects: Project[] = [
   {
     category: "AI Automation · Financial Advisory",
     slug: "advisory-partners",
-
     title: "Advisory Partners",
     image: "/assets/proj-advisory.jpg",
     description:
@@ -122,7 +119,6 @@ export const projects: Project[] = [
   {
     category: "AI Platform · Residential Construction",
     slug: "ai-for-homebuilders",
-
     title: "AI for Homebuilders",
     image: "/assets/proj-homebuilders.jpg",
     description:
@@ -133,7 +129,6 @@ export const projects: Project[] = [
   {
     category: "AI Agent · Operations Automation",
     slug: "starbond",
-
     title: "Starbond",
     image: "/assets/proj-starbond.jpg",
     description:
@@ -143,13 +138,52 @@ export const projects: Project[] = [
   {
     category: "LLM Product · Consumer AI",
     slug: "pocket-pinky",
-
     title: "Pocket Pinky",
     image: "/assets/proj-pocketpinky.jpg",
     description:
       "An AI dating companion that gives genuinely personal advice — not a generic chatbot wrapper. A conversational AI product with persona prompting and conversation memory, coaching users from first-date nerves to long-term relationship questions.",
     tags: ["Next.js", "LLM APIs", "Conversation memory"],
     link: "https://pocketpinky.com/",
+  },
+  {
+    category: "n8n Automation · Ecommerce Reporting",
+    slug: "ceo-kpi-tracker",
+    title: "CEO KPI Tracker",
+    image: "/assets/proj-kpi-dashboard.jpg",
+    description:
+      "A CEO's KPI sheet was filled in by hand every month. Seven n8n workflows now pull daily data from QuickBooks, Amazon Seller Central and Ads, Shopify, Meta, Google Ads and Klaviyo into hidden tabs, and formulas roll it up into the existing KPI, P&L, forecast and YoY tabs. Layout and history stay untouched, so sales, ad spend, ROAS, sessions and profit are current every day.",
+    tags: ["n8n", "Google Sheets", "QuickBooks", "Amazon Ads", "Shopify"],
+    link: "https://www.loom.com/share/f7f8dde663254e8cbd5cd7ed02609919",
+  },
+  {
+    category: "n8n Automation · Product Launch Ops",
+    slug: "npi-tracker",
+    title: "NPI Tracker",
+    image: "/assets/proj-npi-launch.jpg",
+    description:
+      "A ClickUp automation that keeps a new-product launch sequence moving without anyone chasing it. It blocks parent tasks from closing while subtasks are open, closes phases when their work is done, and DMs whoever owns the next step, including fan-out handoffs. Recipients acknowledge the handoff, the previous owner is notified, and anything unacknowledged is chased every weekday morning.",
+    tags: ["n8n", "ClickUp API", "Handoff tracking", "Error alerts"],
+    link: "https://www.loom.com/share/2fe7edd0f0f9471a9f5d81ac548a064c",
+  },
+  {
+    category: "n8n Automation · B2B Order Comms",
+    slug: "b2b-order-communication",
+    title: "B2B Order Communication",
+    image: "/assets/proj-starbond-orders.jpg",
+    description:
+      "Four n8n workflows run Starbond's B2B order communication from ClickUp status changes: order confirmations, payment or shipping notices routed by terms (CC/Wire, Net, CC-Paid, Pickup), up to four daily payment follow-ups for prepay customers, and a final shipping confirmation on payment. Every email is personalised, carries the right invoice, validates required fields first and posts status back to ClickUp.",
+    tags: ["n8n", "ClickUp API", "Email automation", "Error alerts"],
+    link: "https://www.loom.com/share/6cd5d33b8e794a37bd61eef08e85d401",
+  },
+  {
+    category: "Automation · Supply Chain",
+    slug: "po-tracker",
+    title: "PO Tracker",
+    image: "/assets/proj-po-tracker.jpg",
+    description:
+      "An automation layer over the buyers' Google Sheet PO trackers. Every night it writes an Auto Status (Delayed, In Transit, Shipped Late) and days early or late for each PO line. Every Monday it scores each supplier 1 to 5 on OTIF, and on the 1st it emails a monthly report with month-over-month changes. Buyers log supplier calls through a simple form, with dry-run copies and backups keeping tests safe.",
+    tags: ["Google Sheets", "OTIF scoring", "Weekly scorecards", "Monthly reports"],
+    link: "https://www.loom.com/share/e3454c3b61c94324bfff54df98f2a4ce",
   },
 ];
 

@@ -14,7 +14,6 @@ declare global {
   interface Window { __lenis?: Lenis }
 }
 
-/* Inertial smooth scrolling (Lenis) driven by GSAP's ticker so ScrollTrigger stays in sync. */
 export default function SmoothScroll() {
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -23,11 +22,9 @@ export default function SmoothScroll() {
     window.__lenis = lenis;
     lenis.on("scroll", ScrollTrigger.update);
     const raf = (time: number) => lenis.raf(time * 1000);
-    // prioritized: scroll first, then GSAP renders, so nothing reads a stale layout mid-frame
     gsap.ticker.add(raf, false, true);
     gsap.ticker.lagSmoothing(0);
 
-    // hold the page still while the preloader plays
     lenis.stop();
     const start = setTimeout(() => lenis.start(), (INTRO_DELAY - 0.5) * 1000);
 
@@ -39,7 +36,6 @@ export default function SmoothScroll() {
     };
   }, []);
 
-  // New route starts at the top; jump Lenis there too so it doesn't animate back to the old position.
   const pathname = usePathname();
   useEffect(() => {
     window.__lenis?.scrollTo(0, { immediate: true, force: true });
@@ -48,7 +44,6 @@ export default function SmoothScroll() {
   return null;
 }
 
-/* Scroll helper that goes through Lenis when it's running. */
 export function scrollToTop() {
   if (window.__lenis) window.__lenis.scrollTo(0, { duration: 1.6 });
   else window.scrollTo({ top: 0, behavior: "smooth" });

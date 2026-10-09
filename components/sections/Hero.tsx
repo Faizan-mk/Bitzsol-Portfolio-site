@@ -7,20 +7,18 @@ import Magnetic from "@/components/motion/Magnetic";
 import { introDelay } from "@/components/motion/Preloader";
 
 const ease = [0.16, 1, 0.3, 1] as const;
-const HOLD = 4.2; // seconds each shape holds before the bits move on
+const HOLD = 4.2;
 
-// The field opens on the Bitzsol bulb, then spells out what we do. "bulb" is drawn, the rest are typed.
 const SHAPES = [
   { word: "bulb", label: "Bitzsol", services: "Ideas turned into working digital products." },
   { word: "Build.", label: "Build", services: "Websites, web apps, e-commerce stores and cloud applications." },
   { word: "Automate.", label: "Automate", services: "AI automations, chatbots and GoHighLevel CRM, funnels and booking." },
-  { word: "Grow.", label: "Grow", services: "Digital marketing, SEO and social media management." },
-  { word: "Design.", label: "Design", services: "Logos, brand identities, marketing creatives and video editing." },
+  { word: "Grow.", label: "Grow", services: "Digital marketing and social media management." },
+  { word: "Develop.", label: "Develop", services: "Custom software and game development." },
 ];
 
 type Target = { xy: Float32Array; accent: Uint8Array; count: number; gap: number };
 
-// Rasterise one shape off-screen and sample its filled pixels into a grid of target points.
 function sample(word: string, w: number, h: number, mobile: boolean, maxN: number): Target {
   const c = document.createElement("canvas");
   c.width = w; c.height = h;
@@ -29,25 +27,22 @@ function sample(word: string, w: number, h: number, mobile: boolean, maxN: numbe
   const cx = w / 2;
   const cy = h * (mobile ? 0.36 : 0.4);
 
-  // one size for every word, fitted to the longest so the rhythm never jumps
   let size = Math.min(h * (mobile ? 0.2 : 0.34), 320);
   g.font = `800 ${size}px ${family}`;
   const longest = Math.max(...SHAPES.filter((s) => s.word !== "bulb").map((s) => g.measureText(s.word).width));
   size *= Math.min(1, (w * (mobile ? 0.92 : 0.8)) / longest);
 
-  // accent region: the full stop, or the base of the bulb
   let accentFrom = Infinity;
   g.fillStyle = "#fff";
   if (word === "bulb") {
     const r = mobile ? Math.min(w * 0.26, h * 0.13) : size * 0.62;
-    const t = r * 0.36; // ring thickness
+    const t = r * 0.36;
     const top = cy - r * 0.15;
     g.lineWidth = t;
     g.lineCap = "butt";
     g.beginPath();
     g.arc(cx, top, r, Math.PI * 0.72, Math.PI * 2.28);
     g.stroke();
-    // tapered tails curling down toward the base
     for (const side of [-1, 1]) {
       const a = side < 0 ? Math.PI * 0.72 : Math.PI * 0.28;
       const ox = cx + Math.cos(a) * r, oy = top + Math.sin(a) * r;
@@ -75,7 +70,6 @@ function sample(word: string, w: number, h: number, mobile: boolean, maxN: numbe
   }
 
   const data = g.getImageData(0, 0, w, h).data;
-  // start the grid near the right spacing (from the filled area), then widen until the shape fits the particle budget
   let area = 0;
   for (let i = 3; i < data.length; i += 4) if (data[i] > 140) area++;
   let gap = Math.max(3, Math.floor(Math.sqrt(area / maxN)));
@@ -87,7 +81,6 @@ function sample(word: string, w: number, h: number, mobile: boolean, maxN: numbe
     gap++;
   }
   const n = pts.length / 2;
-  // shuffle so a different scatter of bits peels away on every morph
   for (let i = n - 1; i > 0; i--) {
     const j = (Math.random() * (i + 1)) | 0;
     [pts[i * 2], pts[j * 2]] = [pts[j * 2], pts[i * 2]];
@@ -101,7 +94,6 @@ function sample(word: string, w: number, h: number, mobile: boolean, maxN: numbe
   return { xy: Float32Array.from(pts), accent, count: n, gap };
 }
 
-// Run work when the main thread is idle, so sampling never lands on an animation frame.
 const whenIdle = (fn: () => void) =>
   typeof window.requestIdleCallback === "function" ? window.requestIdleCallback(fn, { timeout: 800 }) : setTimeout(fn, 60) as unknown as number;
 const cancelIdle = (id: number) => (typeof window.cancelIdleCallback === "function" ? window.cancelIdleCallback(id) : clearTimeout(id));
@@ -112,12 +104,10 @@ export default function Hero() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const morphRef = useRef<(i: number) => void>(() => {});
   const [active, setActive] = useState(0);
-  const [cycleKey, setCycleKey] = useState(0); // restarts the auto-advance after a manual pick
-  // the intro delay only applies on first load; coming back to the home page later starts right away
+  const [cycleKey, setCycleKey] = useState(0);
   const [intro] = useState(introDelay);
   const d = reduced ? 0 : intro;
 
-  // The particle engine: lives entirely outside React state for speed.
   useEffect(() => {
     const wrap = wrapRef.current, canvas = canvasRef.current;
     if (!wrap || !canvas) return;
@@ -126,11 +116,10 @@ export default function Hero() {
 
     let W = 0, H = 0, dpr = 1, mobile = false, size = 2, maxN = 0, extra = 0;
     let targets: (Target | undefined)[] = [];
-    let N = 0, live = 0; // N bits are allocated; only the first `live` are simulated and drawn
+    let N = 0, live = 0;
     let px = new Float32Array(0), py = new Float32Array(0), vx = new Float32Array(0), vy = new Float32Array(0);
     let tx = new Float32Array(0), ty = new Float32Array(0), hx = new Float32Array(0), hy = new Float32Array(0);
     let tone = new Uint8Array(0), base = new Uint8Array(0), free = new Uint8Array(0), phase = new Float32Array(0);
-    // per-frame draw buckets (colour x loose), so each bit is visited a fixed number of times per frame
     let bucket = new Uint8Array(0), order = new Uint32Array(0);
     const counts = new Uint32Array(8), offs = new Uint32Array(8);
     let current = 0;
@@ -143,7 +132,6 @@ export default function Hero() {
       colors = [v("--color-white", "#fff"), v("--color-neon", "#d5ff27"), v("--color-brand", "#7f3aed"), v("--color-brand-soft", "#9f7aea")];
     };
 
-    // bits nearly touch so the letterforms read solid, with a hairline of space between them
     const refit = () => {
       const ready = targets.filter((t): t is Target => !!t);
       size = Math.max(...ready.map((t) => t.gap)) * 0.78;
@@ -153,7 +141,6 @@ export default function Hero() {
       if (!targets[i]) { targets[i] = sample(SHAPES[i].word, W, H, mobile, maxN); refit(); }
       return targets[i]!;
     };
-    // sample the shapes not on screen yet, one per idle slot
     const sampleRest = () => {
       const i = SHAPES.findIndex((_, k) => !targets[k]);
       if (i === -1) return;
@@ -169,10 +156,8 @@ export default function Hero() {
         if (i < t.count) {
           free[i] = 0;
           tx[i] = t.xy[i * 2]; ty[i] = t.xy[i * 2 + 1];
-          // the bulb glows violet with a neon base, words are ink with a neon full stop
           tone[i] = t.accent[i] ? 1 : bulb ? (base[i] === 0 ? 2 : 3) : base[i];
         } else {
-          // leftover bits drift as dust around the field
           free[i] = 1;
           hx[i] = Math.random() * W; hy[i] = Math.random() * H;
           tone[i] = base[i] === 0 ? 0 : 2;
@@ -187,8 +172,6 @@ export default function Hero() {
       if (!w || !h || (w === W && h === H)) return false;
       W = w; H = h;
       mobile = W < 640;
-      // the bits are flat squares, so 1.5x is as crisp as 2x at a fraction of the fill cost (1.25x on phones,
-      // where GPU memory is tight)
       dpr = Math.min(window.devicePixelRatio || 1, mobile ? 1.25 : 1.5);
       canvas.width = W * dpr; canvas.height = H * dpr;
       canvas.style.width = `${W}px`; canvas.style.height = `${H}px`;
@@ -210,7 +193,7 @@ export default function Hero() {
         }
       }
       live = 0;
-      assign(current, false); // samples only the shape on screen; the rest follow in idle time
+      assign(current, false);
       if (still) for (let i = 0; i < N; i++) { px[i] = free[i] ? hx[i] : tx[i]; py[i] = free[i] ? hy[i] : ty[i]; }
       idleId = whenIdle(sampleRest);
       return true;
@@ -226,7 +209,6 @@ export default function Hero() {
       const R = mobile ? 70 : 120, R2 = R * R, lit2 = R2 * 1.6;
       const pull = now < startAt ? 0 : 0.055;
 
-      // one pass: move each bit, then file it under its colour (bits near the pointer catch the neon)
       counts.fill(0);
       for (let i = 0; i < live; i++) {
         let dx = px[i] - mouse.x, dy = py[i] - mouse.y;
@@ -258,7 +240,6 @@ export default function Hero() {
       for (let b = 0; b < 8; b++) { offs[b] = o; o += counts[b]; }
       for (let i = 0; i < live; i++) order[offs[bucket[i]]++] = i;
 
-      // one fillStyle switch per bucket keeps state changes to a handful per frame
       let from = 0;
       for (let b = 0; b < 8; b++) {
         const to = from + counts[b];
@@ -290,7 +271,6 @@ export default function Hero() {
       mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top;
     };
     const onLeave = () => { mouse.x = mouse.y = -9999; };
-    // a click or tap sends a shockwave through the field
     const onDown = (e: PointerEvent) => {
       if (still) return;
       const r = canvas.getBoundingClientRect();
@@ -303,7 +283,6 @@ export default function Hero() {
 
     let ready = false, resizeT = 0;
     const io = new IntersectionObserver(([e]) => { if (ready) { if (e.isIntersecting) play(); else pause(); } });
-    // resizes are debounced: re-sampling mid-drag would stall every frame of the drag
     const ro = new ResizeObserver(() => {
       if (!ready) return;
       clearTimeout(resizeT);
@@ -334,7 +313,6 @@ export default function Hero() {
 
   useEffect(() => { morphRef.current(active); }, [active]);
 
-  // auto-advance once the intro has landed
   useEffect(() => {
     if (reduced) return;
     const first = cycleKey === 0 ? d * 1000 + 2400 : HOLD * 1000;

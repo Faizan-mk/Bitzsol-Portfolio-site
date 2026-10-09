@@ -2,12 +2,10 @@ import { ImageResponse } from "next/og";
 import { LOGO_B, LOGO_BULB, LOGO_REST } from "@/components/brand/logo-path";
 import { company } from "@/lib/data";
 
-// The preview card shown when a link to the site is shared (WhatsApp, LinkedIn, X, Slack...).
 export const alt = `${company.name} | Build the Next Era`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-// Brand typeface (TTF, which the image renderer needs); falls back to the default font if Google Fonts is unreachable.
 async function loadFont(weight: number) {
   try {
     const css = await (await fetch(`https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@${weight}`)).text();

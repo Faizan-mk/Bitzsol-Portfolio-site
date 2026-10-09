@@ -21,19 +21,16 @@ export default function Navbar() {
   const pathname = usePathname();
   const [hovered, setHovered] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
-  // the entrance waits for the preloader only once
   const [introDone, setIntroDone] = useState(false);
   useEffect(() => {
     const t = setTimeout(() => setIntroDone(true), (INTRO_DELAY + 0.7) * 1000);
     return () => clearTimeout(t);
   }, []);
 
-  // Floating pill once scrolled; the bar itself stays visible at all times.
   useMotionValueEvent(scrollY, "change", (y) => {
     setScrolled(y > 40);
   });
 
-  // Active link follows the route; nested routes like /projects/[slug] keep their parent highlighted.
   const active = navLinks.find((l) => (l.href === "/" ? pathname === "/" : pathname.startsWith(l.href)))?.href ?? null;
 
   useEffect(() => {
@@ -57,7 +54,6 @@ export default function Navbar() {
               : "mt-0 h-20 max-w-7xl border border-transparent px-2 sm:px-3"
           }`}
         >
-          {/* neon hairline glow along the top edge of the floating pill */}
           <span
             aria-hidden
             className={`pointer-events-none absolute inset-x-10 -top-px h-px bg-linear-to-r from-transparent via-neon/70 to-transparent transition-opacity duration-500 ${
@@ -67,11 +63,9 @@ export default function Navbar() {
 
           <Link href="/" className="group relative flex items-center" aria-label={`${company.name}, home`}>
             <Logo className="h-7 w-auto text-white transition-transform duration-500 group-hover:scale-105 sm:h-8" />
-            {/* underline flourish that draws in on hover */}
             <span className="absolute -bottom-1 left-2 h-px w-0 bg-linear-to-r from-neon to-transparent transition-all duration-500 group-hover:w-[85%]" />
           </Link>
 
-          {/* desktop links: a neon pill slides to whatever you hover, then back to the active section */}
           <div
             className="hidden items-center rounded-full border border-white/10 bg-white/[0.03] p-1 lg:flex"
             onMouseLeave={() => setHovered(null)}
@@ -129,7 +123,6 @@ export default function Navbar() {
         </nav>
       </motion.header>
 
-      {/* mobile: full-screen menu, circle wipe from the burger, links rise in one by one */}
       <AnimatePresence>
         {open && (
           <motion.div

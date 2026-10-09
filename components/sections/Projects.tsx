@@ -4,7 +4,6 @@ import Heading from "@/components/ui/Heading";
 import ProjectCard from "@/components/ui/ProjectCard";
 import { projects } from "@/lib/data";
 
-/* Pass `limit` to show a preview (home page) with a link to the full /projects page. */
 export default function Projects({ limit }: { limit?: number }) {
   const shown = limit ? projects.slice(0, limit) : projects;
   return (

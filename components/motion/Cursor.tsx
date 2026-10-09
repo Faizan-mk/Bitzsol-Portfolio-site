@@ -3,7 +3,6 @@
 import { motion, useMotionValue, useSpring } from "motion/react";
 import { useEffect, useState } from "react";
 
-/* Neon dot + trailing ring that swells over anything clickable. Fine pointers only. */
 export default function Cursor() {
   const [enabled, setEnabled] = useState(false);
   const [hover, setHover] = useState(false);

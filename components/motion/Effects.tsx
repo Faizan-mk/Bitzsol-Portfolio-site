@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import { HiArrowUp } from "react-icons/hi2";
 import { scrollToTop } from "./SmoothScroll";
 
-/* Page-wide chrome: spring scroll-progress bar, project-card tilt, back-to-top. */
 export default function Effects() {
   const pathname = usePathname();
   const { scrollY, scrollYProgress } = useScroll();
@@ -15,7 +14,6 @@ export default function Effects() {
   useMotionValueEvent(scrollY, "change", (v) => setShowTop(v > 500));
 
   useEffect(() => {
-    // at most one layout read per frame, however fast the pointer events arrive
     let raf = 0, last: PointerEvent | null = null;
     const apply = () => {
       raf = 0;

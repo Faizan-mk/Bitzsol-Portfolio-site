@@ -8,15 +8,12 @@ import { usePathname } from "next/navigation";
 
 gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin, useGSAP);
 
-/* Every scroll-driven animation on the page, wired up by data attributes in the markup.
-   Lives in the root layout, so it re-runs (and reverts the previous page's triggers) on every route change. */
 export default function ScrollFX() {
   const pathname = usePathname();
   useGSAP(() => {
     const mm = gsap.matchMedia();
 
     mm.add("(prefers-reduced-motion: no-preference)", () => {
-      // Section headings: kicker fades in, title words rise out of a mask.
       gsap.utils.toArray<HTMLElement>("[data-heading]").forEach((h) => {
         const tl = gsap.timeline({ scrollTrigger: { trigger: h, start: "top 85%" } });
         const kicker = h.querySelector<HTMLElement>("[data-kicker]")!;
@@ -25,7 +22,6 @@ export default function ScrollFX() {
           .from(h.querySelectorAll("[data-word]"), { yPercent: 110, rotate: 4, duration: 0.9, stagger: 0.06, ease: "power4.out" }, "<0.15");
       });
 
-      // Generic blocks.
       ScrollTrigger.batch("[data-reveal]", {
         start: "top 88%",
         once: true,
@@ -34,7 +30,6 @@ export default function ScrollFX() {
       });
       gsap.set("[data-reveal]", { opacity: 0 });
 
-      // Project cards flip up in a 3D cascade.
       gsap.set("[data-card]", { opacity: 0, transformPerspective: 1000 });
       ScrollTrigger.batch("[data-card]", {
         start: "top 90%",
@@ -47,8 +42,6 @@ export default function ScrollFX() {
           ),
       });
 
-      // Card images drift inside their frames while scrolling (not on touch screens, where every drifting image
-      // would hold its own GPU layer).
       const touch = window.matchMedia("(pointer: coarse)").matches;
       if (!touch) gsap.utils.toArray<HTMLElement>("[data-parallax]").forEach((img) => {
         gsap.fromTo(img, { yPercent: -8 }, {
@@ -57,7 +50,6 @@ export default function ScrollFX() {
         });
       });
 
-      // Hero sinks and fades as you leave it (home page only).
       if (document.querySelector("#home")) {
         gsap.to("[data-hero-portrait]", {
           yPercent: 18, opacity: 0.2, ease: "none",
@@ -69,7 +61,6 @@ export default function ScrollFX() {
         });
       }
 
-      // Timeline rail draws itself (down, or across when laid out horizontally), dots pop in as each step arrives.
       gsap.utils.toArray<HTMLElement>("[data-line]").forEach((line) => {
         const across = line.offsetWidth > line.offsetHeight;
         gsap.fromTo(line, across ? { scaleX: 0 } : { scaleY: 0 }, {
@@ -78,7 +69,6 @@ export default function ScrollFX() {
         });
       });
       gsap.utils.toArray<HTMLElement>("[data-dot]").forEach((dot, i, all) => {
-        // dots sharing a row would all trigger at once, so stagger them left to right
         const row = all.filter((d) => Math.abs(d.offsetTop - dot.offsetTop) < 4 && d.offsetParent === dot.offsetParent);
         gsap.from(dot, {
           scale: 0, duration: 0.6, ease: "back.out(3)", delay: row.length > 1 ? row.indexOf(dot) * 0.12 : 0,
@@ -86,7 +76,6 @@ export default function ScrollFX() {
         });
       });
 
-      // Outlined words fill in one after another.
       gsap.utils.toArray<HTMLElement>("[data-fill]").forEach((el) => {
         gsap.fromTo(el.querySelectorAll("[data-fill-word]"), { clipPath: "inset(0 100% 0 0)" }, {
           clipPath: "inset(0 0% 0 0)", ease: "none", stagger: 0.6,
@@ -94,7 +83,6 @@ export default function ScrollFX() {
         });
       });
 
-      // Process steps slide in from alternating sides.
       gsap.utils.toArray<HTMLElement>("[data-step]").forEach((el, i) => {
         gsap.from(el, {
           x: i % 2 ? 80 : -80, opacity: 0, duration: 1, ease: "power3.out",
@@ -103,7 +91,6 @@ export default function ScrollFX() {
       });
     });
 
-    // Stats count up (also runs with reduced motion, just instantly).
     gsap.utils.toArray<HTMLElement>("[data-count]").forEach((el) => {
       const target = parseFloat(el.dataset.count!);
       const decimals = (el.dataset.count!.split(".")[1] ?? "").length;
@@ -116,7 +103,6 @@ export default function ScrollFX() {
       });
     });
 
-    // Skill bars fill when their card shows up.
     gsap.utils.toArray<HTMLElement>(".skill-fill").forEach((bar) => {
       gsap.fromTo(bar, { width: "0%" }, {
         width: bar.dataset.w, duration: 1.6, ease: "power3.out",
@@ -124,7 +110,6 @@ export default function ScrollFX() {
       });
     });
 
-    // Fonts and images shift layout after load (or after a client-side navigation); re-measure trigger positions.
     const refresh = () => ScrollTrigger.refresh();
     window.addEventListener("load", refresh);
     const settle = setTimeout(refresh, 300);

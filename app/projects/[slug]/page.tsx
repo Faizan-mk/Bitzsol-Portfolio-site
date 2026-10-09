@@ -11,7 +11,6 @@ import { company, projects } from "@/lib/data";
 
 type Props = { params: Promise<{ slug: string }> };
 
-// Pre-render every project page at build time.
 export function generateStaticParams() {
   return projects.map((p) => ({ slug: p.slug }));
 }
@@ -44,7 +43,6 @@ export default async function ProjectPage({ params }: Props) {
       />
 
       <div className="mx-auto max-w-6xl px-5 sm:px-8">
-        {/* the screenshot, framed as a browser window */}
         <figure className="relative mt-6">
           <div aria-hidden className="pointer-events-none absolute -inset-x-10 -bottom-10 top-10 rounded-full glow [--glow:0.18]" />
           <div className="panel relative overflow-hidden shadow-[0_40px_80px_-30px_rgba(0,0,0,0.9)]">
@@ -63,7 +61,6 @@ export default async function ProjectPage({ params }: Props) {
           </div>
         </figure>
 
-        {/* overview + key facts */}
         <section className="grid gap-5 py-20 md:grid-cols-3">
           <div data-reveal className="spotlight panel p-7 sm:p-9 md:col-span-2">
             <p className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-neon">Overview</p>
@@ -93,14 +90,13 @@ export default async function ProjectPage({ params }: Props) {
             </div>
             <div className="mt-auto flex flex-col gap-3">
               {p.link && (
-                <a href={p.link} target="_blank" rel="noopener noreferrer" className="btn-outline !py-2.5 !text-xs">Visit live site <HiArrowUpRight /></a>
+                <a href={p.link} target="_blank" rel="noopener noreferrer" className="btn-outline !py-2.5 !text-xs">{p.link.includes("loom.com") ? "Watch demo video" : "Visit live site"} <HiArrowUpRight /></a>
               )}
               <Link href="/contact" className="btn-neon !py-2.5 !text-xs">Start a similar project <HiArrowRight /></Link>
             </div>
           </dl>
         </section>
 
-        {/* previous / next */}
         <nav aria-label="More projects" className="grid gap-4 border-y border-line py-8 sm:grid-cols-2">
           <Link href={`/projects/${prev.slug}`} className="group flex items-center gap-4">
             <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-line text-white/60 transition group-hover:border-neon group-hover:text-neon"><HiArrowLeft /></span>

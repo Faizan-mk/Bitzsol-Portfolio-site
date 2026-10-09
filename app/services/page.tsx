@@ -15,7 +15,7 @@ export default function ServicesPage() {
         kicker="Services"
         title="Everything your brand needs to grow"
         accent={2}
-        intro="Websites, AI automation, GoHighLevel, marketing, SEO, design and video, all from one team at fixed and transparent rates."
+        intro="Websites, software and games, AI automation, GoHighLevel and marketing, all from one team at fixed and transparent rates."
       />
       <Services />
       <Marquee />

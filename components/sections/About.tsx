@@ -4,7 +4,6 @@ import { LOGO_B, LOGO_BULB } from "@/components/brand/logo-path";
 
 const title = ["We", "turn", "ideas", "into", "digital", "products."];
 
-// chips that ride the orbit: position on the ring, and a float delay so they bob out of step
 const chips = [
   { label: "Fixed pricing", Icon: HiOutlineTag, pos: "left-[2%] top-[18%]", delay: "0s" },
   { label: "Fast delivery", Icon: HiOutlineBolt, pos: "right-[-2%] top-[46%]", delay: "-2s" },
@@ -16,7 +15,6 @@ export default function About() {
     <section id="about" className="mx-auto max-w-6xl scroll-mt-24 px-5 py-24 sm:px-8">
       <div className="grid items-center gap-16 md:grid-cols-[1.1fr_1fr]">
         <div>
-          {/* data-heading/data-kicker/data-word: ScrollFX scrambles the kicker and raises the words */}
           <div data-heading>
             <p data-kicker className="kicker mb-6 text-[11px] font-semibold uppercase tracking-[0.25em] text-neon">Who We Are</p>
             <h2 aria-label={title.join(" ")} className="text-4xl font-extrabold leading-[1.05] text-white sm:text-5xl">
@@ -36,7 +34,6 @@ export default function About() {
           </div>
         </div>
 
-        {/* the Bitzsol bulb at the centre of slowly turning orbits */}
         <div data-reveal aria-hidden className="relative mx-auto aspect-square w-full max-w-[26rem]">
           <div className="absolute inset-0 rounded-full glow [--glow:0.28]" />
           <div className="deco-loop orbit absolute inset-0 rounded-full border border-dashed border-white/12" />

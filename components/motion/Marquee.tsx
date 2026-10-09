@@ -7,9 +7,8 @@ import { useRef } from "react";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
-const words = ["Web Development", "AI Automations", "GoHighLevel", "Digital Marketing", "Social Media", "SEO", "Graphic Design", "Video Editing", "E-Commerce", "Cloud"];
+const words = ["Web Development", "AI Automations", "GoHighLevel", "Digital Marketing", "Social Media", "Software Development", "Game Development", "E-Commerce", "Cloud"];
 
-/* Endless tech ticker that speeds up with scroll velocity and flips direction with scroll direction. */
 export default function Marquee() {
   const root = useRef<HTMLDivElement>(null);
 
@@ -20,7 +19,6 @@ export default function Marquee() {
       const loops = tracks.map((t, i) =>
         gsap.to(t, { xPercent: i % 2 ? 0 : -50, startAt: { xPercent: i % 2 ? -50 : 0 }, duration: 30, ease: "none", repeat: -1 })
       );
-      // one shared speed value: scroll velocity kicks it up, then it eases back to cruising speed
       const speed = { v: 1 };
       const apply = () => loops.forEach((l) => l.timeScale(speed.v));
       loops.forEach((l) => l.pause());
@@ -29,7 +27,6 @@ export default function Marquee() {
         trigger: root.current,
         start: "top bottom",
         end: "bottom top",
-        // the ticker only runs while the band is on screen
         onToggle: (self) => loops.forEach((l) => (self.isActive ? l.resume() : l.pause())),
         onUpdate: (self) => {
           const dir = self.direction;

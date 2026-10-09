@@ -5,19 +5,15 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useRef, type ReactNode } from "react";
 import * as THREE from "three";
 
-/* The Bitzsol studio in 3D: a floating round platform with the glowing bulb in the middle and four characters
-   around it, one for each service. The platform turns to bring the active one to the front. */
-
 const SKIN = "#f0b98f";
 const NEON = "#d5ff27";
 const VIOLET = "#7f3aed";
 const DARK = "#2a2a33";
-const R = 2.5; // radius the stations sit on
+const R = 2.5;
 
 type Parts = { head: THREE.Group; armL: THREE.Group; armR: THREE.Group; body: THREE.Group };
 type Anim = (t: number, p: Parts) => void;
 
-/* ---------- a toy-like person built from rounded primitives ---------- */
 function Person({ shirt, hair, hairStyle, legs = true, animate, children }: {
   shirt: string; hair: string; hairStyle: "short" | "bun" | "long"; legs?: boolean; animate?: Anim; children?: ReactNode;
 }) {
@@ -40,10 +36,8 @@ function Person({ shirt, hair, hairStyle, legs = true, animate, children }: {
           <mesh position={[x, 0.06, 0.06]} castShadow><sphereGeometry args={[0.12, 20, 16]} /><meshStandardMaterial color="#141418" /></mesh>
         </group>
       ))}
-      {/* torso */}
       <mesh position={[0, 0.92, 0]} castShadow><capsuleGeometry args={[0.3, 0.38, 8, 24]} /><meshStandardMaterial color={shirt} roughness={0.6} /></mesh>
 
-      {/* arms pivot at the shoulders */}
       {([[-1, armL], [1, armR]] as const).map(([side, ref]) => (
         <group key={side} ref={ref} position={[side * 0.37, 1.18, 0]}>
           <mesh position={[0, -0.24, 0]} castShadow><capsuleGeometry args={[0.085, 0.36, 6, 12]} /><meshStandardMaterial color={shirt} roughness={0.6} /></mesh>
@@ -54,11 +48,9 @@ function Person({ shirt, hair, hairStyle, legs = true, animate, children }: {
       <group ref={head} position={[0, 1.62, 0]}>
         <mesh position={[0, -0.24, 0]}><cylinderGeometry args={[0.08, 0.09, 0.14, 12]} /><meshStandardMaterial color="#dda07a" /></mesh>
         <mesh castShadow><sphereGeometry args={[0.32, 32, 24]} /><meshStandardMaterial color={SKIN} roughness={0.5} /></mesh>
-        {/* hair cap */}
         <mesh rotation={[-0.35, 0, 0]} castShadow><sphereGeometry args={[0.338, 32, 24, 0, Math.PI * 2, 0, Math.PI * 0.52]} /><meshStandardMaterial color={hair} roughness={0.8} /></mesh>
         {hairStyle === "bun" && <mesh position={[0, 0.3, -0.12]} castShadow><sphereGeometry args={[0.14, 20, 16]} /><meshStandardMaterial color={hair} roughness={0.8} /></mesh>}
         {hairStyle === "long" && <mesh position={[0, -0.22, -0.1]} castShadow><capsuleGeometry args={[0.28, 0.3, 6, 20]} /><meshStandardMaterial color={hair} roughness={0.8} /></mesh>}
-        {/* face */}
         {[-0.11, 0.11].map((x) => (
           <mesh key={x} position={[x, 0.02, 0.29]} scale={[1, 1.25, 0.6]}><sphereGeometry args={[0.042, 12, 10]} /><meshStandardMaterial color="#141016" /></mesh>
         ))}
@@ -72,7 +64,6 @@ function Person({ shirt, hair, hairStyle, legs = true, animate, children }: {
   );
 }
 
-/* ---------- 1. design ---------- */
 function Designer() {
   const shapes = useRef<THREE.Group>(null!);
   useFrame(({ clock }) => {
@@ -88,14 +79,13 @@ function Designer() {
         <Person
           shirt={VIOLET} hair="#3b2416" hairStyle="bun"
           animate={(t, p) => {
-            p.armR.rotation.z = 1.25 + Math.sin(t * 3) * 0.25; // painting strokes
+            p.armR.rotation.z = 1.25 + Math.sin(t * 3) * 0.25;
             p.armR.rotation.x = -0.4;
             p.armL.rotation.z = -0.15;
             p.head.rotation.y = 0.45;
           }}
         />
       </group>
-      {/* easel */}
       <group position={[0.75, 0, -0.1]} rotation={[0, -0.45, 0]}>
         {[-0.3, 0.3].map((x) => (
           <mesh key={x} position={[x, 0.7, 0]} rotation={[0, 0, x > 0 ? -0.12 : 0.12]} castShadow><cylinderGeometry args={[0.03, 0.03, 1.5, 8]} /><meshStandardMaterial color="#6b4f37" /></mesh>
@@ -111,7 +101,6 @@ function Designer() {
   );
 }
 
-/* ---------- 2. build ---------- */
 function Developer() {
   const panels = useRef<THREE.Group>(null!);
   useFrame(({ clock }) => {
@@ -123,11 +112,10 @@ function Developer() {
         <Person
           shirt={DARK} hair="#1d1410" hairStyle="short" legs={false}
           animate={(t, p) => {
-            // typing
             p.armL.rotation.x = -1.05 + Math.sin(t * 14) * 0.08;
             p.armR.rotation.x = -1.05 + Math.sin(t * 14 + 1.6) * 0.08;
             p.armL.rotation.z = 0.25; p.armR.rotation.z = -0.25;
-            p.head.rotation.x = 0.18 + Math.sin(t * 4) * 0.04; // nodding to the music
+            p.head.rotation.x = 0.18 + Math.sin(t * 4) * 0.04;
           }}
         >
           <mesh position={[0, 0.06, 0]}><torusGeometry args={[0.36, 0.035, 10, 32, Math.PI]} /><meshStandardMaterial color="#15151a" /></mesh>
@@ -136,7 +124,6 @@ function Developer() {
           ))}
         </Person>
       </group>
-      {/* desk + laptop */}
       <RoundedBox args={[1.7, 0.08, 0.8]} radius={0.03} position={[0, 0.78, 0]} castShadow receiveShadow><meshStandardMaterial color="#2c2c35" /></RoundedBox>
       {[-0.75, 0.75].map((x) => (
         <mesh key={x} position={[x, 0.38, 0]} castShadow><boxGeometry args={[0.06, 0.76, 0.6]} /><meshStandardMaterial color="#202027" /></mesh>
@@ -146,9 +133,7 @@ function Developer() {
         <RoundedBox args={[0.62, 0.42, 0.025]} radius={0.01} position={[0, 0.21, 0]}><meshStandardMaterial color="#d4d6dc" metalness={0.6} roughness={0.25} /></RoundedBox>
         <mesh position={[0, 0.21, 0.015]}><circleGeometry args={[0.06, 24]} /><meshStandardMaterial color={NEON} emissive={NEON} emissiveIntensity={1.2} /></mesh>
       </group>
-      {/* coffee */}
       <mesh position={[0.6, 0.92, 0.15]} castShadow><cylinderGeometry args={[0.08, 0.07, 0.18, 20]} /><meshStandardMaterial color={VIOLET} /></mesh>
-      {/* floating code windows */}
       <group ref={panels}>
         {[[0.95, 1.95, 0.1, -0.3], [-0.95, 1.65, 0.1, 0.3]].map(([x, y, z, ry], i) => (
           <group key={i} position={[x, y, z]} rotation={[0, ry, 0]}>
@@ -166,7 +151,6 @@ function Developer() {
   );
 }
 
-/* ---------- 3. automate ---------- */
 function Robot() {
   const bot = useRef<THREE.Group>(null!);
   const armL = useRef<THREE.Group>(null!);
@@ -180,8 +164,8 @@ function Robot() {
     const t = clock.elapsedTime;
     bot.current.position.y = Math.sin(t * 2.2) * 0.05;
     bot.current.rotation.y = Math.sin(t * 0.8) * 0.2;
-    armL.current.rotation.z = -0.3 - Math.abs(Math.sin(t * 3)) * 0.8; // waving
-    armR.current.rotation.x = -1.2 + Math.sin(t * 2) * 0.15; // pointing at the workflow
+    armL.current.rotation.z = -0.3 - Math.abs(Math.sin(t * 3)) * 0.8;
+    armR.current.rotation.x = -1.2 + Math.sin(t * 2) * 0.15;
     eyes.current.scale.y = t % 3.5 < 0.12 ? 0.1 : 1;
     gearA.current.rotation.z = t * 1.2;
     gearB.current.rotation.z = -t * 1.8;
@@ -219,10 +203,8 @@ function Robot() {
         <mesh position={[0, 1.98, 0]}><cylinderGeometry args={[0.02, 0.02, 0.22, 8]} />{joint}</mesh>
         <mesh position={[0, 2.12, 0]}><sphereGeometry args={[0.07, 16, 12]} /><meshStandardMaterial color={NEON} emissive={NEON} emissiveIntensity={2} /></mesh>
       </group>
-      {/* gears */}
       <mesh ref={gearA} position={[-0.95, 1.7, -0.1]}><torusGeometry args={[0.24, 0.08, 6, 12]} /><meshStandardMaterial color="#5a5a66" metalness={0.6} roughness={0.3} flatShading /></mesh>
       <mesh ref={gearB} position={[-0.68, 1.35, -0.1]}><torusGeometry args={[0.14, 0.06, 6, 9]} /><meshStandardMaterial color={VIOLET} metalness={0.4} roughness={0.3} flatShading /></mesh>
-      {/* workflow */}
       <Line points={[[0.55, 1.0, 0.3], ...nodePos]} color={NEON} lineWidth={2} dashed dashSize={0.06} gapSize={0.05} transparent opacity={0.7} />
       <group ref={nodes}>
         {nodePos.map((p, i) => (
@@ -235,7 +217,6 @@ function Robot() {
   );
 }
 
-/* ---------- 4. grow ---------- */
 function Marketer() {
   const bars = useRef<THREE.Group>(null!);
   const likes = useRef<THREE.Group>(null!);
@@ -246,7 +227,7 @@ function Marketer() {
       m.scale.y = h; m.position.y = h / 2;
     });
     likes.current.children.forEach((m, i) => {
-      const k = (t * 0.5 + i / 3) % 1; // each like rises, then starts again
+      const k = (t * 0.5 + i / 3) % 1;
       m.position.set(0.55 + Math.sin(k * 6 + i) * 0.15, 2.0 + k * 1.1, 0.3);
       m.scale.setScalar(Math.sin(k * Math.PI) * 0.09);
     });
@@ -257,12 +238,11 @@ function Marketer() {
         <Person
           shirt="#f1ebdf" hair="#4a2c1d" hairStyle="long"
           animate={(t, p) => {
-            p.armR.rotation.z = 2.3 + Math.sin(t * 2.4) * 0.12; // megaphone held high
+            p.armR.rotation.z = 2.3 + Math.sin(t * 2.4) * 0.12;
             p.armL.rotation.z = -0.2 + Math.sin(t * 1.5) * 0.08;
             p.head.rotation.y = 0.25;
           }}
         />
-        {/* megaphone in the raised hand */}
         <group position={[0.68, 1.68, 0]} rotation={[0, 0, -0.7]}>
           <mesh><coneGeometry args={[0.17, 0.42, 24, 1, true]} /><meshStandardMaterial color={VIOLET} side={THREE.DoubleSide} /></mesh>
           <mesh position={[0, 0.21, 0]} rotation={[Math.PI / 2, 0, 0]}><torusGeometry args={[0.17, 0.02, 8, 24]} /><meshStandardMaterial color={NEON} emissive={NEON} emissiveIntensity={0.6} /></mesh>
@@ -273,7 +253,6 @@ function Marketer() {
           <mesh key={i}><sphereGeometry args={[1, 16, 12]} /><meshStandardMaterial color={i === 1 ? NEON : "#f472b6"} emissive={i === 1 ? NEON : "#f472b6"} emissiveIntensity={0.6} /></mesh>
         ))}
       </group>
-      {/* growth chart */}
       <group ref={bars} position={[0.85, 0, 0]}>
         {["#a78bfa", VIOLET, NEON].map((c, i) => (
           <mesh key={c} position={[(i - 1) * 0.26, 0, 0]} castShadow>
@@ -286,7 +265,6 @@ function Marketer() {
   );
 }
 
-/* ---------- the Bitzsol bulb ---------- */
 function Bulb() {
   const ref = useRef<THREE.Group>(null!);
   useFrame(({ clock }) => {
@@ -304,8 +282,6 @@ function Bulb() {
   );
 }
 
-/* Compiles every shader and draws one frame as soon as the scene mounts, so the first visible frame
-   (usually mid-scroll) doesn't stall on shader compilation. */
 function Warmup() {
   const { gl, scene, camera, advance } = useThree();
   useEffect(() => {
@@ -323,7 +299,6 @@ function Stage({ active, pointer }: { active: number; pointer: { current: { x: n
   const target = -active * (Math.PI / 2);
   const camGoal = useRef(new THREE.Vector3()).current;
   useFrame((_, dt) => {
-    // ease the platform to the active station (along the shortest way round), plus a little pointer lean
     const goal = target + pointer.current.x * 0.35;
     let diff = goal - turn.current.rotation.y;
     diff = Math.atan2(Math.sin(diff), Math.cos(diff));
@@ -336,7 +311,6 @@ function Stage({ active, pointer }: { active: number; pointer: { current: { x: n
   return (
     <>
       <group ref={turn}>
-        {/* platform */}
         <mesh position={[0, -0.12, 0]} receiveShadow><cylinderGeometry args={[3.7, 3.5, 0.24, 64]} /><meshStandardMaterial color="#15151b" roughness={0.6} /></mesh>
         <mesh position={[0, 0.005, 0]} rotation={[-Math.PI / 2, 0, 0]}><torusGeometry args={[3.68, 0.025, 8, 96]} /><meshStandardMaterial color={NEON} emissive={NEON} emissiveIntensity={1.4} /></mesh>
         <mesh position={[0, 0.002, 0]} rotation={[-Math.PI / 2, 0, 0]}><ringGeometry args={[0.6, 0.66, 64]} /><meshStandardMaterial color={VIOLET} emissive={VIOLET} emissiveIntensity={1} /></mesh>
@@ -348,7 +322,6 @@ function Stage({ active, pointer }: { active: number; pointer: { current: { x: n
             </group>
           );
         })}
-        {/* baked once: the shadows turn with the platform, so they never need re-rendering */}
         <ContactShadows frames={1} position={[0, 0.01, 0]} scale={8} blur={2.4} opacity={0.55} far={3} resolution={512} />
       </group>
       <Bulb />
@@ -357,7 +330,6 @@ function Stage({ active, pointer }: { active: number; pointer: { current: { x: n
 }
 
 export default function Studio({ active, running, pointer }: { active: number; running: boolean; pointer: { current: { x: number; y: number } } }) {
-  // phones get a lighter canvas: fewer pixels and no multisampling keep GPU memory low
   const compact = typeof window !== "undefined" && window.innerWidth < 768;
   return (
     <Canvas

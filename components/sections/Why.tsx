@@ -5,7 +5,6 @@ export default function Why() {
   return (
     <section id="why" className="mx-auto max-w-7xl scroll-mt-24 px-5 py-24 sm:px-8">
       <Heading kicker="Our Advantage" title="Why Bitzsol" />
-      {/* each word fills in from an outline as you scroll (ScrollFX animates [data-fill-word]) */}
       <p data-fill aria-label="Fixed. Fast. Scalable. Efficient." className="mb-12 text-center text-3xl font-extrabold leading-tight sm:text-6xl">
         {["Fixed.", "Fast.", "Scalable.", "Efficient."].map((w, i) => (
           <span key={w} aria-hidden className="relative mr-[0.25em] inline-block last:mr-0">

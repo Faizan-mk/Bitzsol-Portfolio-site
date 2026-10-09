@@ -3,29 +3,26 @@ import type { CSSProperties } from "react";
 import type { IconType } from "react-icons";
 import { HiArrowRight } from "react-icons/hi2";
 import {
-  PiBezierCurveDuotone, PiBrainDuotone, PiBrowserDuotone, PiCalendarCheckDuotone, PiChartBarDuotone,
-  PiChatCircleDotsDuotone, PiCodeDuotone, PiCpuDuotone, PiCursorClickDuotone, PiDeviceMobileDuotone,
-  PiEnvelopeSimpleDuotone, PiFilmStripDuotone, PiFunnelDuotone, PiGearSixDuotone, PiGlobeDuotone, PiHeartDuotone,
-  PiLightningDuotone, PiMagnifyingGlassDuotone, PiMegaphoneDuotone, PiMusicNotesDuotone, PiPaletteDuotone,
-  PiPenNibDuotone, PiPlayCircleDuotone, PiRankingDuotone, PiRobotDuotone, PiRocketLaunchDuotone, PiStackDuotone,
-  PiTargetDuotone, PiThumbsUpDuotone, PiTrendUpDuotone, PiUsersThreeDuotone, PiVideoCameraDuotone,
+  PiBrainDuotone, PiBrowserDuotone, PiCalendarCheckDuotone, PiChartBarDuotone, PiChatCircleDotsDuotone,
+  PiCodeDuotone, PiCpuDuotone, PiCursorClickDuotone, PiDatabaseDuotone, PiDeviceMobileDuotone,
+  PiEnvelopeSimpleDuotone, PiFunnelDuotone, PiGameControllerDuotone, PiGearSixDuotone, PiGitBranchDuotone,
+  PiHeartDuotone, PiJoystickDuotone, PiLightningDuotone, PiMegaphoneDuotone, PiPuzzlePieceDuotone,
+  PiRobotDuotone, PiRocketLaunchDuotone, PiStackDuotone, PiTerminalWindowDuotone, PiThumbsUpDuotone,
+  PiTrendUpDuotone, PiTrophyDuotone, PiUsersThreeDuotone,
 } from "react-icons/pi";
 import Heading from "@/components/ui/Heading";
 import { services } from "@/lib/data";
 
-// per service, in the same order as `services` in lib/data: the hero icon and three satellites (the first may spin)
 const art: { main: IconType; sats: [IconType, IconType, IconType]; spin?: boolean }[] = [
   { main: PiCodeDuotone, sats: [PiGearSixDuotone, PiBrowserDuotone, PiCursorClickDuotone], spin: true },
   { main: PiBrainDuotone, sats: [PiCpuDuotone, PiRobotDuotone, PiLightningDuotone] },
   { main: PiFunnelDuotone, sats: [PiCalendarCheckDuotone, PiUsersThreeDuotone, PiEnvelopeSimpleDuotone] },
   { main: PiRocketLaunchDuotone, sats: [PiChartBarDuotone, PiTrendUpDuotone, PiMegaphoneDuotone] },
   { main: PiDeviceMobileDuotone, sats: [PiHeartDuotone, PiChatCircleDotsDuotone, PiThumbsUpDuotone] },
-  { main: PiMagnifyingGlassDuotone, sats: [PiRankingDuotone, PiGlobeDuotone, PiTargetDuotone] },
-  { main: PiPenNibDuotone, sats: [PiGearSixDuotone, PiBezierCurveDuotone, PiStackDuotone], spin: true },
-  { main: PiPlayCircleDuotone, sats: [PiFilmStripDuotone, PiVideoCameraDuotone, PiMusicNotesDuotone] },
+  { main: PiTerminalWindowDuotone, sats: [PiDatabaseDuotone, PiGitBranchDuotone, PiStackDuotone], spin: true },
+  { main: PiGameControllerDuotone, sats: [PiJoystickDuotone, PiTrophyDuotone, PiPuzzlePieceDuotone] },
 ];
 
-// satellite positions (% of the art box); odd cards mirror them so neighbours don't look stamped
 const spots = [[17, 22], [83, 26], [79, 78]] as const;
 const sparks = [[30, 12], [70, 10], [10, 55], [92, 52], [40, 88], [62, 92]] as const;
 
@@ -33,8 +30,6 @@ const loop = (name: string, dur: number, delay = 0, timing = "ease-in-out"): CSS
   animation: `${name} ${dur}s ${timing} ${delay}s infinite`,
 });
 
-/* A glowing line-art scene: the service's icon on a glass tile, satellites linked to it by flowing lines,
-   twinkling sparks, and rays that shoot up on hover. CSS loops only (transform/opacity, stroke offsets). */
 function Illustration({ index }: { index: number }) {
   const { main: Main, sats, spin } = art[index % art.length];
   const flip = index % 2 === 1;
@@ -59,7 +54,6 @@ function Illustration({ index }: { index: number }) {
         <span key={i} className={`deco-loop absolute h-1 w-1 rounded-full ${i % 2 ? "bg-brand-soft" : "bg-neon"}`} style={{ left: `${x}%`, top: `${y}%`, ...loop("twinkle", 2.4, i * 0.4) }} />
       ))}
 
-      {/* rays that shoot up from the tile on hover */}
       {[-18, 0, 18].map((dx, i) => (
         <span key={dx} className="svc-ray absolute bottom-1/2 h-16 w-px bg-linear-to-t from-neon to-transparent opacity-0" style={{ left: `calc(50% + ${dx}px)`, animationDelay: `${i * 0.25}s` }} />
       ))}
@@ -88,7 +82,6 @@ function Illustration({ index }: { index: number }) {
 export default function Services() {
   return (
     <section id="services" className="relative scroll-mt-24 py-24">
-      {/* floating glass orbs and drifting light waves behind the grid */}
       <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
         {[
           { c: "right-[6%] top-16 h-20 w-20", d: 0 },

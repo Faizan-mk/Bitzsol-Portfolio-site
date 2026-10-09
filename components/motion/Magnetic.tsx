@@ -3,7 +3,6 @@
 import { motion, useMotionValue, useSpring } from "motion/react";
 import { useRef } from "react";
 
-/* Pulls its child toward the pointer while hovered, then springs back. */
 export default function Magnetic({ children, strength = 0.35 }: { children: React.ReactNode; strength?: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const x = useSpring(useMotionValue(0), { stiffness: 200, damping: 15, mass: 0.4 });

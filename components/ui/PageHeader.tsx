@@ -8,8 +8,6 @@ import { introDelay } from "@/components/motion/Preloader";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
-/* Opening banner for inner pages: breadcrumb, kicker, a headline whose words rise out of a mask
-   (the last `accent` words in neon), and a short intro, over a faint grid and glow. */
 export default function PageHeader({
   crumb, parent, kicker, title, accent = 1, intro,
 }: { crumb: string; parent?: { href: string; label: string }; kicker: string; title: string; accent?: number; intro: string }) {

@@ -5,28 +5,21 @@ import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import { INTRO_DELAY } from "./Preloader";
 
-// WebGL only exists in the browser, so the 3D studio is loaded client-side.
 const Studio = dynamic(() => import("../three/Studio"), { ssr: false });
 
-/* What we do, shown by the Bitzsol studio in 3D: four characters, one per service, around the glowing bulb.
-   The platform turns to bring each one to the front. */
-
 const services = [
-  { name: "Design", detail: "Logos, brand identity, graphics and video" },
-  { name: "Build", detail: "Websites, web apps and online stores" },
+  { name: "Design", detail: "UI/UX for websites, apps and games" },
+  { name: "Build", detail: "Websites, software and games" },
   { name: "Automate", detail: "AI automations and GoHighLevel" },
-  { name: "Grow", detail: "Marketing, SEO and social media" },
+  { name: "Grow", detail: "Marketing and social media" },
 ];
-const HOLD = 4; // seconds per character
+const HOLD = 4;
 
 export default function Statement() {
   const ref = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();
   const inView = useInView(ref, { margin: "10% 0px" });
-  // the WebGL canvas only exists near the screen, so phones get its GPU memory back once you scroll past
   const near = useInView(ref, { margin: "300px 0px" });
-  // Desktops build the scene ahead of time, once the intro has settled, so it never compiles mid-scroll.
-  // Phones keep mounting it only near the screen to hold GPU memory down.
   const [warm, setWarm] = useState(false);
   useEffect(() => {
     if (window.innerWidth < 768) return;
@@ -34,7 +27,7 @@ export default function Statement() {
     return () => clearTimeout(t);
   }, []);
   const [active, setActive] = useState(0);
-  const [cycle, setCycle] = useState(0); // restarts the timer after a manual pick
+  const [cycle, setCycle] = useState(0);
   const pointer = useRef({ x: 0, y: 0 });
 
   useEffect(() => {

@@ -3,7 +3,6 @@
 @theme {
   --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-body), ui-sans-serif, sans-serif;
-  /* Components use white/black utilities for "foreground"/"background"; light mode swaps them below. */
   --color-white: #ffffff;
   --color-black: #000000;
   --color-ink: #000000;
@@ -16,7 +15,6 @@
   --color-on-neon: #0a0a0a;
 }
 
-/* Light theme: off-white paper, black ink, deepened neon green so it stays readable. */
 html.light {
   --color-white: #101010;
   --color-black: #f1f2f2;
@@ -35,7 +33,6 @@ html.light {
 }
 :root { --sig-a: #eaff9e; --sig-b: #d5ff27; --sig-c: #9fd400; color-scheme: dark; }
 
-/* Headings: display face with tight tracking. */
 @layer base {
   h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.025em; }
 }
@@ -46,7 +43,6 @@ body { background: var(--color-ink); color: color-mix(in oklab, var(--color-whit
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-thumb { background: color-mix(in oklab, var(--color-white) 20%, transparent); border-radius: 3px; }
 
-/* Panels: soft-sheen cards with a neon-green gradient hairline border that lights up on hover. */
 .panel {
   position: relative;
   background: linear-gradient(180deg, color-mix(in oklab, var(--color-white) 3.5%, transparent), transparent 60%), var(--color-panel);
@@ -57,7 +53,6 @@ body { background: var(--color-ink); color: color-mix(in oklab, var(--color-whit
 html.light .panel { box-shadow: 0 1px 2px rgba(23, 19, 12, 0.04), 0 8px 24px -12px rgba(23, 19, 12, 0.08); }
 .panel::before {
   content: ""; position: absolute; inset: -1px; border-radius: inherit; padding: 1px; pointer-events: none;
-  /* conic so a hovered card's light can travel round the border (see panelSpin) */
   background: conic-gradient(from var(--panel-angle), rgba(213,255,39,0.5), transparent 22%, transparent 45%, rgba(127,58,237,0.45) 60%, transparent 78%, rgba(213,255,39,0.5));
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor; mask-composite: exclude;
@@ -72,7 +67,6 @@ html.light .panel { box-shadow: 0 1px 2px rgba(23, 19, 12, 0.04), 0 8px 24px -12
   box-shadow: 0 24px 48px -16px rgba(213,255,39,0.22);
 }
 
-/* Spotlight: a soft neon light that follows the pointer across a card (vars set by <Effects />). */
 .spotlight { position: relative; }
 .spotlight::after {
   content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 1;
@@ -90,13 +84,11 @@ html.light .chip { background: rgba(213, 255, 39, 0.25); color: #3f6212; }
 
 .text-on-neon { color: var(--color-on-neon); }
 
-/* Neon-green gradient text, tuned per theme. */
 .neon-text {
   background: linear-gradient(90deg, var(--sig-a), var(--sig-b) 50%, var(--sig-c));
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
 
-/* Neon-green call-to-action: flat, dark text (brand high-conversion CTA). */
 .btn-neon {
   display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
   padding: 0.75rem 1.5rem; border-radius: 9999px;
@@ -123,7 +115,6 @@ html.light .chip { background: rgba(213, 255, 39, 0.25); color: #3f6212; }
 
 .skill-fill { width: 0; background: linear-gradient(90deg, var(--color-neon-deep), var(--sig-a)); }
 
-/* Typewriter caret that rides along after the newest letter. */
 @keyframes caretBlink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
 .type-caret {
   position: absolute; top: 12%; right: -0.1em; width: 0.06em; height: 0.8em;
@@ -132,7 +123,6 @@ html.light .chip { background: rgba(213, 255, 39, 0.25); color: #3f6212; }
   animation: caretBlink 0.9s steps(1) infinite;
 }
 
-/* Aurora: slow-drifting green and purple light behind the whole page (transform-only animation, cheap to paint). */
 @keyframes auroraA { 0%, 100% { transform: translate(-10%, -5%) scale(1); } 50% { transform: translate(15%, 10%) scale(1.15); } }
 @keyframes auroraB { 0%, 100% { transform: translate(10%, 20%) scale(1.1); } 50% { transform: translate(-15%, -10%) scale(0.9); } }
 .aurora { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
@@ -142,29 +132,24 @@ html.light .chip { background: rgba(213, 255, 39, 0.25); color: #3f6212; }
 html.light .aurora::before { background: radial-gradient(closest-side, rgba(213,255,39,0.16), transparent); }
 html.light .aurora::after { background: radial-gradient(closest-side, rgba(127, 58, 237, 0.14), transparent); }
 
-/* Section label: small glass pill with a glowing dot. */
 .kicker {
   display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0.9rem; border-radius: 9999px;
   border: 1px solid rgba(213,255,39,0.25); background: rgba(213,255,39,0.06);
 }
 .kicker::before { content: ""; width: 6px; height: 6px; border-radius: 9999px; background: var(--color-neon); box-shadow: 0 0 10px var(--color-neon); }
 
-/* Film grain over the whole page for a tactile, printed feel. */
 .grain {
   position: fixed; inset: 0; z-index: 120; pointer-events: none; opacity: 0.05;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 html.light .grain { opacity: 0.035; }
 
-/* Light mode legibility: faded ink that reads fine on black is too faint on ivory,
-   so low-opacity text is darkened (hover states keep working). */
 html.light :is([class*="text-white/2"], [class*="text-white/3"], [class*="text-white/4"]) { color: color-mix(in oklab, var(--color-white) 68%, transparent); }
 html.light :is([class*="text-white/5"], [class*="text-white/6"]) { color: color-mix(in oklab, var(--color-white) 78%, transparent); }
 html.light :is([class*="text-white/7"], [class*="text-white/8"], [class*="text-white/9"]) { color: color-mix(in oklab, var(--color-white) 88%, transparent); }
 html.light [class*="hover:text-white"]:hover { color: var(--color-white); }
 html.light [class*="hover:text-neon"]:hover { color: var(--color-neon); }
 
-/* Giant outlined name in the footer. */
 .outline-name {
   color: transparent;
   -webkit-text-stroke: 1px rgba(213,255,39,0.4);
@@ -173,7 +158,6 @@ html.light [class*="hover:text-neon"]:hover { color: var(--color-neon); }
 }
 html.light .outline-name { -webkit-text-stroke-color: rgba(70, 122, 0, 0.4); background-image: linear-gradient(180deg, rgba(70, 122, 0, 0.18), transparent 75%); }
 
-/* Service card loops (transform/opacity only). */
 @keyframes codeLine { 0%, 100% { transform: scaleX(0.15); } 50% { transform: scaleX(1); } }
 @keyframes appPop { 0%, 100% { transform: scale(1); opacity: 0.55; } 50% { transform: scale(0.82); opacity: 1; } }
 @keyframes dash { to { stroke-dashoffset: -28; } }
@@ -181,18 +165,14 @@ html.light .outline-name { -webkit-text-stroke-color: rgba(70, 122, 0, 0.4); bac
 @keyframes scan { 0%, 100% { transform: translateY(-48px); opacity: 0; } 15%, 85% { opacity: 1; } 50% { transform: translateY(48px); } }
 @keyframes barGrow { 0%, 100% { transform: scaleY(0.55); } 50% { transform: scaleY(1); } }
 
-/* Soft ambient glow. A radial gradient instead of filter: blur() — looks the same, costs almost nothing to paint. */
 .glow { background: radial-gradient(closest-side, rgb(127 58 237 / var(--glow, 0.15)), rgb(127 58 237 / calc(var(--glow, 0.15) * 0.35)) 55%, transparent); }
 
-/* Custom cursor replaces the system one on fine pointers. */
-/* cursor is inherited, so only elements with their own UA cursor need overriding (no costly `*` selector) */
 .has-cursor, .has-cursor :is(a, button, input, textarea, select, label, [role="button"]) { cursor: none !important; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
 
-/* Faint blueprint grid behind inner-page headers, fading out toward the edges. */
 .page-grid {
   background-image:
     linear-gradient(color-mix(in oklab, var(--color-white) 6%, transparent) 1px, transparent 1px),
@@ -203,7 +183,6 @@ html.light .outline-name { -webkit-text-stroke-color: rgba(70, 122, 0, 0.4); bac
   mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 30%, transparent 75%);
 }
 
-/* Route-change curtain (see app/template.tsx). */
 .route-curtain {
   position: fixed; inset: 0; z-index: 150; pointer-events: none;
   background: var(--color-ink);
@@ -215,10 +194,8 @@ html.light .outline-name { -webkit-text-stroke-color: rgba(70, 122, 0, 0.4); bac
   box-shadow: 0 0 24px var(--color-neon);
 }
 
-/* Hollow version of a word, shown under its fill until the fill scrolls in (Why section). */
 .outline-word { color: transparent; -webkit-text-stroke: 1px color-mix(in oklab, var(--color-white) 30%, transparent); }
 
-/* About visual: orbits turn slowly, the chips riding them bob gently (transform-only, compositor friendly). */
 @keyframes orbitSpin { to { transform: rotate(360deg); } }
 @keyframes chipFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 .orbit { animation: orbitSpin 40s linear infinite; }
@@ -226,7 +203,6 @@ html.light .outline-name { -webkit-text-stroke-color: rgba(70, 122, 0, 0.4); bac
 .chip-float { animation: chipFloat 6s ease-in-out infinite; }
 html.light .chip-float > span { background: rgba(255, 255, 255, 0.8); }
 
-/* Services cards: a neon glow on hover, rays off the art, twinkling sparks and drifting background waves. */
 .svc-card { transition: translate 0.45s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, box-shadow 0.4s ease; }
 .svc-card:hover {
   translate: 0 -6px;
@@ -238,9 +214,6 @@ html.light .chip-float > span { background: rgba(255, 255, 255, 0.8); }
 @keyframes twinkle { 0%, 100% { opacity: 0.15; transform: scale(0.6); } 50% { opacity: 1; transform: scale(1.4); } }
 @keyframes waveDrift { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(24px); } }
 
-/* Phones and tablets: GPU memory is tight, and running out of it tears the page into garbled stripes.
-   Drop the purely decorative layers that cost the most there: the full-screen grain, backdrop blurs,
-   masked gradient borders, hover-only spotlights, and the looping ornaments (.deco-loop). */
 @media (pointer: coarse), (max-width: 767px) {
   .grain, .page-grid { display: none; }
   .aurora::before, .aurora::after { animation: none; }
