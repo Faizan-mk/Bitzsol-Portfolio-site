@@ -106,7 +106,7 @@ export default function Navbar() {
             <div className="hidden sm:block">
               <Magnetic strength={0.3}>
                 <Link href="/contact" className="btn-neon !py-2.5 !text-xs">
-                  <HiOutlinePaperAirplane className="-rotate-45" /> Contact Me
+                  <HiOutlinePaperAirplane className="-rotate-45" /> Contact Us
                 </Link>
               </Magnetic>
             </div>
