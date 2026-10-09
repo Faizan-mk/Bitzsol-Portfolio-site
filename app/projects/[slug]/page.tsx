@@ -35,7 +35,7 @@ export default async function ProjectPage({ params }: Props) {
     <>
       <PageHeader
         crumb={p.title}
-        parent={{ href: "/projects", label: "Work" }}
+        parent={{ href: "/projects", label: "Portfolio" }}
         kicker={p.category}
         title={p.title}
         accent={Math.max(1, Math.floor(p.title.split(" ").length / 2))}
