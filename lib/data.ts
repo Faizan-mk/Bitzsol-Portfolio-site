@@ -99,6 +99,16 @@ export type Project = {
 
 export const projects: Project[] = [
   {
+    category: "Game Development · Steam",
+    slug: "fever-tilt",
+    title: "Fever Tilt",
+    image: "/assets/proj-fever-tilt.jpg",
+    description:
+      "A fast-paced 1v1 arena sports game set in zero gravity. Two players mine gems from about 100 frozen blocks, turn drifting debris into weapons, and sabotage each other with lasers, tractor beams and missiles. Every 3–7 minute match plays out in a newly generated arena. Prototyped at Noisebridge for a custom dual-screen arcade table, refined through weekly playtests, and a ribbon recipient at Maker Faire Bay Area 2025 — coming to Steam Early Access in November 2026.",
+    tags: ["Zero-G physics", "Procedural arenas", "Local multiplayer", "Steam"],
+    link: "https://store.steampowered.com/app/5167920/Fever_Tilt_Demo/",
+  },
+  {
     category: "Mobile App · Matchmaking",
     slug: "matrimonial-app",
     title: "Matrimonial App",
