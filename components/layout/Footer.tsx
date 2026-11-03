@@ -3,7 +3,7 @@
 import { motion } from "motion/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { FaLinkedinIn } from "react-icons/fa6";
+import { FaInstagram, FaLinkedinIn } from "react-icons/fa6";
 import { HiArrowUpRight, HiOutlineChatBubbleLeftRight, HiOutlineEnvelope, HiOutlinePhone } from "react-icons/hi2";
 import { company, navLinks } from "@/lib/data";
 import Logo from "@/components/brand/Logo";
@@ -90,6 +90,17 @@ export default function Footer() {
                   className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 text-white/70 transition hover:border-neon hover:bg-neon hover:text-on-neon"
                 >
                   <FaLinkedinIn />
+                </a>
+              </Magnetic>
+              <Magnetic strength={0.5}>
+                <a
+                  href={company.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Bitzsol on Instagram"
+                  className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 text-white/70 transition hover:border-neon hover:bg-neon hover:text-on-neon"
+                >
+                  <FaInstagram />
                 </a>
               </Magnetic>
             </div>

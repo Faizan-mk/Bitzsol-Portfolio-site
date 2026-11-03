@@ -10,6 +10,7 @@ export const company = {
   phone2: "+92 339 0449978",
   phone2Href: "tel:+923390449978",
   linkedin: "https://pk.linkedin.com/company/bitzsol",
+  instagram: "https://www.instagram.com/bitzsoldigital",
   about:
     "Bitzsol Digital (SMC-PVT) Ltd is a technology-driven digital solutions company. We build web, e-commerce and cloud products, custom software and games, automate workflows with AI and GoHighLevel, and grow brands through marketing and social media — all at fixed, transparent rates.",
   philosophy:
