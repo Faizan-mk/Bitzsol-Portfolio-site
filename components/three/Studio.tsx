@@ -303,7 +303,9 @@ function Stage({ active, pointer }: { active: number; pointer: { current: { x: n
     let diff = goal - turn.current.rotation.y;
     diff = Math.atan2(Math.sin(diff), Math.cos(diff));
     turn.current.rotation.y += diff * Math.min(1, dt * 3);
-    const far = size.width < 640 ? 11 : 9;
+    const aspect = size.width / Math.max(1, size.height);
+    const fitDistance = 4.2 / (Math.tan((34 * Math.PI) / 360) * aspect);
+    const far = THREE.MathUtils.clamp(fitDistance, 9, 19);
     camera.position.lerp(camGoal.set(pointer.current.x * 0.8, 3.1 - pointer.current.y * 0.6, far), Math.min(1, dt * 2));
     camera.lookAt(0, 1.45, 0);
   });
