@@ -31,8 +31,8 @@ export default function Preloader() {
     let raf = 0;
     const tick = (t: number) => {
       const p = Math.min(1, (t - start) / (HOLD * 1000 - 200));
-      if (barRef.current) barRef.current.style.transform = `scaleX(${p})`;
-      if (numRef.current) numRef.current.textContent = String(Math.round(p * 100)).padStart(3, "0");
+      if (barRef.current) barRef.current.style.width = `${p * 100}%`;
+      if (numRef.current) numRef.current.textContent = String(Math.round(p * 100));
       if (p < 1) raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
@@ -135,12 +135,12 @@ export default function Preloader() {
             </div>
 
             <div className="absolute bottom-10 left-1/2 w-56 -translate-x-1/2 sm:bottom-12">
-              <div className="h-px w-full overflow-hidden bg-white/10">
-                <div ref={barRef} className="h-full w-full origin-left scale-x-0 bg-linear-to-r from-neon-deep via-white to-neon-deep" />
-              </div>
-              <div className="mt-3 flex justify-between font-mono text-[10px] tabular-nums text-white/35">
+              <div className="flex justify-between font-mono text-[10px] tabular-nums text-white/35">
                 <span>LOADING</span>
-                <span ref={numRef}>000</span>
+                <span ref={numRef}>0</span>
+              </div>
+              <div className="mt-3 h-0.5 w-full overflow-hidden rounded-full bg-white/10">
+                <div ref={barRef} className="h-full w-0 rounded-full bg-linear-to-r from-neon-deep via-neon to-neon-deep shadow-[0_0_12px_rgba(213,255,39,0.6)]" />
               </div>
             </div>
           </motion.div>
