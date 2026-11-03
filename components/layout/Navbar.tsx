@@ -162,11 +162,9 @@ export default function Navbar() {
               <a href={company.website} target="_blank" rel="noopener noreferrer" className="btn-neon w-full">
                 <HiOutlineGlobeAlt /> Visit our website
               </a>
-              <div className="space-y-1.5 text-sm text-white/50">
-                <a href={`mailto:${company.email}`} className="block truncate transition hover:text-neon">{company.email}</a>
-                <a href={company.phoneHref} className="block transition hover:text-neon">{company.phone}</a>
-                <a href={company.phone2Href} className="block transition hover:text-neon">{company.phone2}</a>
-              </div>
+              <Link href="/contact" onClick={() => setOpen(false)} className="btn-outline w-full">
+                <HiOutlinePaperAirplane className="-rotate-45" /> Contact Us
+              </Link>
             </motion.div>
           </motion.div>
         )}
