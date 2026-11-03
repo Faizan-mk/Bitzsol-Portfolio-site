@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { FaLinkedinIn } from "react-icons/fa6";
-import { HiOutlineEnvelope, HiOutlineGlobeAlt, HiOutlinePhone } from "react-icons/hi2";
+import { HiOutlineEnvelope, HiOutlinePhone } from "react-icons/hi2";
 import PageHeader from "@/components/ui/PageHeader";
 import { company } from "@/lib/data";
 
@@ -10,7 +10,6 @@ const channels = [
   { label: "Email", value: company.email, href: `mailto:${company.email}`, Icon: HiOutlineEnvelope },
   { label: "Phone", value: company.phone, href: company.phoneHref, Icon: HiOutlinePhone },
   { label: "Phone", value: company.phone2, href: company.phone2Href, Icon: HiOutlinePhone },
-  { label: "Website", value: company.websiteLabel, href: company.website, Icon: HiOutlineGlobeAlt, external: true },
   { label: "LinkedIn", value: "Bitzsol on LinkedIn", href: company.linkedin, Icon: FaLinkedinIn, external: true },
 ];
 

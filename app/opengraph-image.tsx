@@ -43,9 +43,8 @@ export default async function OpengraphImage() {
           </div>
         </div>
 
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 24, color: "rgba(255,255,255,0.5)" }}>
+        <div style={{ display: "flex", alignItems: "center", fontSize: 24, color: "rgba(255,255,255,0.5)" }}>
           <span>{company.legalName}</span>
-          <span style={{ color: "#d5ff27" }}>{company.websiteLabel}</span>
         </div>
       </div>
     ),

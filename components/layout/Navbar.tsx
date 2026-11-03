@@ -4,7 +4,7 @@ import { AnimatePresence, motion, useMotionValueEvent, useReducedMotion, useScro
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { HiOutlineGlobeAlt, HiOutlinePaperAirplane } from "react-icons/hi2";
+import { HiOutlinePaperAirplane, HiOutlineSquares2X2 } from "react-icons/hi2";
 import { company, navLinks } from "@/lib/data";
 import Logo from "@/components/brand/Logo";
 import ThemeToggle from "@/components/ui/ThemeToggle";
@@ -93,16 +93,6 @@ export default function Navbar() {
 
           <div className="flex items-center gap-2">
             <ThemeToggle />
-            <a
-              href={company.website}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Visit www.bitzsol.com"
-              title="www.bitzsol.com"
-              className="hidden h-10 w-10 items-center justify-center rounded-xl border border-white/10 text-white/70 transition hover:border-neon/60 hover:text-neon sm:flex"
-            >
-              <HiOutlineGlobeAlt size={18} />
-            </a>
             <div className="hidden sm:block">
               <Magnetic strength={0.3}>
                 <Link href="/contact" className="btn-neon !py-2.5 !text-xs">
@@ -159,9 +149,9 @@ export default function Navbar() {
               transition={{ delay: 0.5, duration: 0.5 }}
               className="mt-auto space-y-5"
             >
-              <a href={company.website} target="_blank" rel="noopener noreferrer" className="btn-neon w-full">
-                <HiOutlineGlobeAlt /> Visit our website
-              </a>
+              <Link href="/projects" onClick={() => setOpen(false)} className="btn-neon w-full">
+                <HiOutlineSquares2X2 /> Our Work
+              </Link>
               <Link href="/contact" onClick={() => setOpen(false)} className="btn-outline w-full">
                 <HiOutlinePaperAirplane className="-rotate-45" /> Contact Us
               </Link>

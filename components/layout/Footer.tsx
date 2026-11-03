@@ -4,7 +4,7 @@ import { motion } from "motion/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { FaLinkedinIn } from "react-icons/fa6";
-import { HiArrowUpRight, HiOutlineChatBubbleLeftRight, HiOutlineEnvelope, HiOutlineGlobeAlt, HiOutlinePhone } from "react-icons/hi2";
+import { HiArrowUpRight, HiOutlineChatBubbleLeftRight, HiOutlineEnvelope, HiOutlinePhone } from "react-icons/hi2";
 import { company, navLinks } from "@/lib/data";
 import Logo from "@/components/brand/Logo";
 import Magnetic from "@/components/motion/Magnetic";
@@ -83,17 +83,6 @@ export default function Footer() {
             <div className="mt-6 flex gap-3">
               <Magnetic strength={0.5}>
                 <a
-                  href={company.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={company.websiteLabel}
-                  className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 text-white/70 transition hover:border-neon hover:bg-neon hover:text-on-neon"
-                >
-                  <HiOutlineGlobeAlt />
-                </a>
-              </Magnetic>
-              <Magnetic strength={0.5}>
-                <a
                   href={company.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -138,11 +127,6 @@ export default function Footer() {
                   <HiOutlinePhone className="shrink-0 text-neon" /> {company.phone2}
                 </a>
               </li>
-              <li>
-                <a href={company.website} target="_blank" rel="noopener noreferrer" className="flex items-start gap-3 break-all transition hover:text-white">
-                  <HiOutlineGlobeAlt className="mt-0.5 shrink-0 text-neon" /> {company.websiteLabel}
-                </a>
-              </li>
               <li className="flex items-start gap-3">
                 <HiOutlineChatBubbleLeftRight className="mt-0.5 shrink-0 text-neon" />
                 <Link href="/contact" className="transition hover:text-white">Visit our contact page to start a conversation.</Link>
@@ -162,9 +146,6 @@ export default function Footer() {
             <p className="mt-3 text-sm text-white/50">
               Local time: <LocalTime />
             </p>
-            <a href={company.website} target="_blank" rel="noopener noreferrer" className="btn-outline mt-6 !py-2.5 !text-xs">
-              <HiOutlineGlobeAlt /> {company.websiteLabel}
-            </a>
           </div>
         </div>
       </div>

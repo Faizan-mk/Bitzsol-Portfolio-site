@@ -4,8 +4,6 @@ export const company = {
   initials: "BD",
   role: "Digital Solutions Company",
   tagline: "Driving growth, shaping the future through transformation.",
-  website: "https://www.bitzsol.com",
-  websiteLabel: "www.bitzsol.com",
   email: "Hello@bitzsol.com",
   phone: "+92 303 0608794",
   phoneHref: "tel:+923030608794",
